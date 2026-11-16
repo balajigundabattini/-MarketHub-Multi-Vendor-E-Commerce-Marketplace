@@ -1,6 +1,9 @@
 import { useEffect, useState } from 'react'
-import { Link, useParams } from 'react-router-dom'
+import { Link, useNavigate, useParams } from 'react-router-dom'
+import { toast } from 'react-toastify'
 import { fetchProduct } from '../api/catalog'
+import { addToCart, addToWishlist } from '../api/shopping'
+import { useAuth } from '../auth/useAuth'
 
 const formatPrice = (price, currency) => new Intl.NumberFormat(undefined, {
   style: 'currency', currency: currency || 'INR',
@@ -8,11 +11,14 @@ const formatPrice = (price, currency) => new Intl.NumberFormat(undefined, {
 
 const ProductDetails = () => {
   const { productId } = useParams()
+  const navigate = useNavigate()
+  const { user } = useAuth()
   const [product, setProduct] = useState(null)
   const [selectedImage, setSelectedImage] = useState(null)
   const [loading, setLoading] = useState(true)
   const [loadedProductId, setLoadedProductId] = useState(null)
   const [error, setError] = useState('')
+  const [actionBusy, setActionBusy] = useState(false)
 
   useEffect(() => {
     let active = true
@@ -39,6 +45,22 @@ const ProductDetails = () => {
   if (error || !product) return <main className="container py-5"><div className="alert alert-warning" role="alert">{error || 'Product not found.'}</div><Link to="/products">Back to products</Link></main>
 
   const images = product.images || []
+  const saveProduct = async (action) => {
+    if (!user) {
+      navigate('/login', { state: { from: { pathname: `/products/${productId}` } } })
+      return
+    }
+    setActionBusy(true)
+    try {
+      if (action === 'cart') await addToCart(product.id)
+      else await addToWishlist(product.id)
+      toast.success(action === 'cart' ? 'Added to your cart.' : 'Saved to your wishlist.')
+    } catch (requestError) {
+      toast.error(requestError.response?.data?.detail || 'The product could not be saved.')
+    } finally {
+      setActionBusy(false)
+    }
+  }
   return (
     <main className="container py-4">
       <p><Link to="/products">← Back to products</Link></p>
@@ -61,6 +83,10 @@ const ProductDetails = () => {
           {product.brand && <p className="text-secondary">{product.brand}</p>}
           <p className="h3 my-4">{formatPrice(product.price, product.currency)}</p>
           <p className="text-secondary">Sold by {product.storeName || 'MarketHub seller'}</p>
+          <div className="d-flex flex-wrap gap-2 my-4">
+            <button className="btn btn-primary" type="button" disabled={actionBusy} onClick={() => saveProduct('cart')}>Add to cart</button>
+            <button className="btn btn-outline-primary" type="button" disabled={actionBusy} onClick={() => saveProduct('wishlist')}>Add to wishlist</button>
+          </div>
           <div className="border-top pt-4 mt-4"><h2 className="h5">Product details</h2><p style={{ whiteSpace: 'pre-line' }}>{product.description}</p></div>
           {product.specifications?.length > 0 && <dl className="row mt-4">
             {product.specifications.map((item) => <div className="row" key={item.name}><dt className="col-5">{item.name}</dt><dd className="col-7">{item.value}</dd></div>)}
