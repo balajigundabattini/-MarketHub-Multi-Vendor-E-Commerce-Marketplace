@@ -5,6 +5,7 @@ import Home from '../Pages/Home'
 import VerifyEmail from '../Pages/VerifyEmail'
 import ForgotPassword from '../Pages/ForgotPassword'
 import ResetPassword from '../Pages/ResetPassword'
+import Account from '../Pages/Account'
 
 const Routings = () => {
   return (
@@ -15,6 +16,7 @@ const Routings = () => {
       <Route path="/verify-email" element={<VerifyEmail />} />
       <Route path="/forgot-password" element={<ForgotPassword />} />
       <Route path="/reset-password" element={<ResetPassword />} />
+      <Route path="/account" element={<Account />} />
       <Route path="/home" element={<Navigate to="/" replace />} />
       <Route path="*" element={<Navigate to="/" replace />} />
     </Routes>

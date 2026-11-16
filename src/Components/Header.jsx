@@ -8,6 +8,7 @@ const Header = () => (
         <span>MarketHub</span>
       </Link>
       <nav className="header-actions" aria-label="Main navigation">
+        <Link to="/account">Account</Link>
         <Link to="/login">Sign in</Link>
         <Link className="header-register" to="/register">Join MarketHub</Link>
       </nav>

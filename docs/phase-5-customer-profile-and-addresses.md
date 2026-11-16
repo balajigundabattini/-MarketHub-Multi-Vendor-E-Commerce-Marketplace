@@ -54,4 +54,4 @@ Address create/update example:
 
 ## Verification and remaining integration
 
-Backend unit tests include an owner-scoped address lookup check. Full repository, entity mapping, and MySQL migration validation require a configured local MySQL database. Frontend profile-page integration is pending because the current working tree has in-progress deletions of the existing React pages/routes; those changes were left untouched.
+The React account page at `/account` edits profile details and supports adding, editing, choosing a default, and removing saved addresses. Backend unit tests include an owner-scoped address lookup check. Frontend lint and production build pass. Full repository, entity mapping, and MySQL validation require a configured local MySQL database.
