@@ -131,13 +131,13 @@ We can migrate the starter's existing `Pages`, `Components`, and `Routes` folder
 
 1. Public registration creates a customer account only; it cannot assign `ADMIN` or approved `SELLER`.
 2. Seller application is a separate workflow. Admin approval changes seller status; it does not rely on a frontend role choice.
-3. Passwords are BCrypt hashes. Access tokens are short-lived. Refresh tokens are rotated and revocable; raw refresh tokens are not stored.
+3. Passwords are BCrypt hashes. The browser keeps short-lived access tokens in memory and sends them as Bearer tokens. Rotating refresh tokens are stored only as hashes in MySQL and delivered in HttpOnly, SameSite cookies. Refresh/logout require a signed double-submit CSRF token; production cookies must use Secure.
 4. A backend security filter authenticates the access token. Route authorization is coarse-grained by role; application services also check resource ownership and state.
 5. Public product read endpoints expose only active/approved listings. Admin and seller endpoints require appropriate role and ownership.
 6. Payment webhooks are verified against the provider signature and processed idempotently before they change order/payment state.
 7. Secrets and provider credentials come from environment or secret storage, never committed config.
 
-The first authentication implementation will choose cookie or bearer-token transport as a documented decision based on the deployment topology. If using browser cookies, configure HttpOnly, Secure, SameSite, CSRF, CORS, and refresh behavior together; do not put long-lived tokens in local storage by default.
+The first authentication implementation uses in-memory Bearer access tokens and cookie-based refresh. CORS allows only the configured frontend origin. The refresh cookie is HttpOnly; the CSRF cookie is JavaScript-readable and path-wide so Axios can send its value on refresh/logout. The API verifies the cookie/header match and HMAC signature. Do not put long-lived tokens in local storage.
 
 ## 7. Order and inventory transaction boundary
 

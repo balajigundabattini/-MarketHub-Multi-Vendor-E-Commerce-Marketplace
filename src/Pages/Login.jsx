@@ -2,9 +2,10 @@ import { useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import apiClient from '../api/client'
+import { setAccessToken } from '../api/accessToken'
 
 const Login = () => {
-    const [userName, setUserName] = useState("");
+    const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
     const navigate = useNavigate();
 
@@ -12,16 +13,17 @@ const Login = () => {
     const submitHandler = async (e) => {
         e.preventDefault();
         const userData = {
-           userName, password
+            email, password
         }
 
         try {
-            await apiClient.post('/auth/login', userData);
+            const response = await apiClient.post('/auth/login', userData);
+            setAccessToken(response.data.accessToken)
             toast.success("Login successfully");
             navigate("/");
 
         } catch (err) {
-            toast.error(err.response?.data?.error || "Login failed");
+            toast.error(err.response?.data?.detail || "Login failed");
         }
     }
   return (
@@ -29,8 +31,8 @@ const Login = () => {
             <div className='col-lg-4'></div>
             <div className='col-lg-4 bg-secondary-subtle  border border-2 rounded-2 p-4 lh-lg'>
                 <form onSubmit={submitHandler}>
-                    <label className='fs-6 fw-bold' htmlFor="login-name">User Name</label><br />
-                    <input id="login-name" type="text" className='w-75 border rounded-3 ps-2 mb-2' placeholder='Enter Your UserName' required onChange={(e) => setUserName(e.target.value)} value={userName}/><br />
+                    <label className='fs-6 fw-bold' htmlFor="login-email">Email</label><br />
+                    <input id="login-email" type="email" className='w-75 border rounded-3 ps-2 mb-2' placeholder='Enter Your Email' required onChange={(e) => setEmail(e.target.value)} value={email}/><br />
                     <label className='fs-6 fw-bold' htmlFor="login-password">Password</label><br />
                     <input id="login-password" type="password" className='w-75 border rounded-3 ps-2 mb-2' placeholder='Enter Password' required onChange={(e) => setPassword(e.target.value)} value={password}/><br />
                     <p className='text-center'>Don't have an account? <Link to="/register" className='text-decoration-none'>Register</Link></p>

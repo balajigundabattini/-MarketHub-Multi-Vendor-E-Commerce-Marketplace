@@ -2,9 +2,10 @@ import { useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import apiClient from '../api/client'
+import { setAccessToken } from '../api/accessToken'
 
 const Register = () => {
-    const [userName, setUserName] = useState("");
+    const [displayName, setDisplayName] = useState("");
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
     const navigate = useNavigate();
@@ -12,18 +13,19 @@ const Register = () => {
 
     const submitHandler = async (e) => {
         e.preventDefault();
-        const userData = { userName, email, password }
+        const userData = { displayName, email, password }
 
         try {
-            await apiClient.post('/users/register', userData);
+            const response = await apiClient.post('/auth/register', userData);
+            setAccessToken(response.data.accessToken)
             toast.success("Registered successfully");
-            setUserName("");
+            setDisplayName("");
             setEmail("");
             setPassword("");
             navigate("/login");
 
         } catch (err) {
-            toast.error(err.response?.data?.error || "Registration failed");
+            toast.error(err.response?.data?.detail || "Registration failed");
         }
     }
 
@@ -32,8 +34,8 @@ const Register = () => {
             <div className='col-lg-4'></div>
             <div className='col-lg-4 bg-secondary-subtle  border border-2 rounded-2 p-4 lh-lg'>
                 <form onSubmit={submitHandler}>
-                    <label className='fs-6 fw-bold' htmlFor="register-name">User Name</label><br />
-                    <input id="register-name" type="text" className='w-75 border rounded-3 ps-2 mb-2' placeholder='Enter Your Name' required onChange={(e) => setUserName(e.target.value)} value={userName} /><br />
+                    <label className='fs-6 fw-bold' htmlFor="register-name">Name</label><br />
+                    <input id="register-name" type="text" className='w-75 border rounded-3 ps-2 mb-2' placeholder='Enter Your Name' required onChange={(e) => setDisplayName(e.target.value)} value={displayName} /><br />
                     <label className='fs-6 fw-bold' htmlFor="register-email">Email</label><br />
                     <input id="register-email" type="email" className='w-75 border rounded-3 ps-2 mb-2' placeholder='Enter Your Email' required onChange={(e) => setEmail(e.target.value)} value={email}/><br />
                     <label className='fs-6 fw-bold' htmlFor="register-password">Password</label><br />
