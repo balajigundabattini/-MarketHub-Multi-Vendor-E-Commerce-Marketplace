@@ -4,15 +4,30 @@ MarketHub is a portfolio project for a multi-vendor marketplace. Customers will 
 
 Project repository: [balajigundabattini/-MarketHub-Multi-Vendor-E-Commerce-Marketplace](https://github.com/balajigundabattini/-MarketHub-Multi-Vendor-E-Commerce-Marketplace)
 
-The project is being built in phases as a modular monolith: a React frontend, a Java 21 / Spring Boot REST backend, and MySQL. This repository currently contains the frontend starter and project planning document. Marketplace workflows and the backend are not implemented yet.
+The project is being built in phases as a modular monolith: a React frontend, a Java 21 / Spring Boot REST backend, and MySQL. The frontend shell and initial backend scaffold are in place; marketplace business workflows are not implemented yet.
 
 ## Current status
 
 - Project identity and initial requirements/scope are established.
 - Frontend scaffold: React, Vite, JavaScript, React Router, Redux Toolkit, Axios, and Bootstrap.
-- Backend, database schema, and marketplace features: planned, not yet implemented.
+- Backend scaffold: Java 21, Spring Boot 4.1.2, Maven Wrapper, Actuator, and a health endpoint.
+- Initial identity/catalog/cart MySQL migration: drafted; it has not yet been applied to a local database.
+- Authentication, product workflows, cart/checkout, orders, payments, and seller/admin features: not yet implemented.
 
 See [Phase 1 requirements and scope](docs/phase-1-requirements-and-scope.md) for roles, business rules, MVP boundaries, and implementation dependencies.
+
+Architecture and data model decisions are tracked in [Phase 2 architecture](docs/phase-2-architecture.md) and [Phase 3 database design](docs/phase-3-database-design.md).
+
+## Backend
+
+Java 21 is required. Maven is bootstrapped by the wrapper; Maven itself does not need to be installed globally. See [backend setup](backend/README.md) for MySQL environment variables and commands.
+
+```powershell
+cd backend
+./mvnw.cmd test
+```
+
+The frontend has build and lint scripts. It does not yet define a separate frontend test script.
 
 ## Run the frontend
 

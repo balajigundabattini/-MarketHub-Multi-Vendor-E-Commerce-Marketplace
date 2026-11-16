@@ -175,7 +175,7 @@ Security and API conventions begin with identity and apply to every later module
 
 ## 12. Current assumptions to validate during design
 
-- “MarketHub” is the product name. The current local folder still has its original `sales-savvy-frontend` directory name; the npm package identity is now `markethub-marketplace`.
+- “MarketHub” is the product name. The original frontend folder and package have been renamed to `MarketHub` and `markethub-marketplace` respectively.
 - The first release targets one country/currency and a single deployment region.
 - Shipping rates, tax rules, seller commission rates, and return windows will begin as configurable/simple policies rather than integrations with external services.
 - Product images are stored as media references; the storage provider and upload flow will be chosen during architecture/setup.
