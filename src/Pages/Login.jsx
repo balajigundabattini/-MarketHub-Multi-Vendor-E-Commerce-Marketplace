@@ -36,6 +36,7 @@ const Login = () => {
                     <label className='fs-6 fw-bold' htmlFor="login-password">Password</label><br />
                     <input id="login-password" type="password" className='w-75 border rounded-3 ps-2 mb-2' placeholder='Enter Password' required onChange={(e) => setPassword(e.target.value)} value={password}/><br />
                     <p className='text-center'>Don't have an account? <Link to="/register" className='text-decoration-none'>Register</Link></p>
+                    <p className='text-center'><Link to="/forgot-password" className='text-decoration-none'>Forgot your password?</Link></p>
                     <button className='text-white bg-primary border rounded-4 ps-3 pe-3' type='submit' value="login" >Login</button>
                 </form>
             </div>

@@ -95,6 +95,11 @@ public class RefreshTokenService {
         });
     }
 
+    @Transactional
+    public void revokeAllForUser(Long userId) {
+        refreshTokenRepository.revokeAllForUser(userId, clock.instant());
+    }
+
     private String newOpaqueToken() {
         byte[] bytes = new byte[32];
         secureRandom.nextBytes(bytes);

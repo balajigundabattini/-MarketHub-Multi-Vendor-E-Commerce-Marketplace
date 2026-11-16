@@ -2,7 +2,7 @@ import { useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import apiClient from '../api/client'
-import { setAccessToken } from '../api/accessToken'
+import { clearAccessToken } from '../api/accessToken'
 
 const Register = () => {
     const [displayName, setDisplayName] = useState("");
@@ -16,9 +16,9 @@ const Register = () => {
         const userData = { displayName, email, password }
 
         try {
-            const response = await apiClient.post('/auth/register', userData);
-            setAccessToken(response.data.accessToken)
-            toast.success("Registered successfully");
+            await apiClient.post('/auth/register', userData);
+            clearAccessToken()
+            toast.success("Check your email to verify your account before logging in.");
             setDisplayName("");
             setEmail("");
             setPassword("");

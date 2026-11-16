@@ -12,10 +12,12 @@ The project is being built in phases as a modular monolith: a React frontend, a 
 - Frontend scaffold: React, Vite, JavaScript, React Router, Redux Toolkit, Axios, and Bootstrap.
 - Backend scaffold: Java 21, Spring Boot 4.1.2, Maven Wrapper, Actuator, and a health endpoint.
 - Initial identity/catalog/cart MySQL migration: drafted; it has not yet been applied to a local database.
-- Authentication API: customer registration, login, refresh rotation, logout, JWT resource-server validation, and frontend session restoration.
+- Authentication API: customer registration with email verification, login, refresh rotation, logout, password recovery, JWT resource-server validation, and frontend session restoration.
 - Product workflows, cart/checkout, orders, payments, and seller/admin features: not yet implemented.
 
 See [Phase 1 requirements and scope](docs/phase-1-requirements-and-scope.md) for roles, business rules, MVP boundaries, and implementation dependencies.
+
+Authentication design, endpoints, security choices, and completion status are documented in [Phase 4 authentication](docs/phase-4-authentication.md).
 
 Architecture and data model decisions are tracked in [Phase 2 architecture](docs/phase-2-architecture.md) and [Phase 3 database design](docs/phase-3-database-design.md).
 
