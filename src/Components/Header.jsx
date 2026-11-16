@@ -26,10 +26,13 @@ const Header = () => {
         <nav className="header-actions" aria-label="Main navigation">
           <Link to="/products">Shop</Link>
           {roles.includes('CUSTOMER') && <Link to="/account">Account</Link>}
+          {roles.includes('CUSTOMER') && <Link to="/seller/apply">Sell on MarketHub</Link>}
           {roles.includes('CUSTOMER') && <Link to="/wishlist">Wishlist</Link>}
           {roles.includes('CUSTOMER') && <Link to="/cart">Cart</Link>}
           {roles.includes('CUSTOMER') && <Link to="/orders">Orders</Link>}
           {roles.includes('CUSTOMER') && <Link to="/notifications">Notifications</Link>}
+          {roles.includes('SELLER') && <Link to="/seller">Seller workspace</Link>}
+          {roles.includes('ADMIN') && <Link to="/admin">Admin console</Link>}
           {!loading && !user && <Link to="/login">Sign in</Link>}
           {!loading && !user && <Link className="header-register" to="/register">Join MarketHub</Link>}
           {user && <span aria-label="Signed in user">{user.displayName}</span>}

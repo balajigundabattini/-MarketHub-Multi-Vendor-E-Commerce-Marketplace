@@ -27,31 +27,32 @@ This tracks the React screens requested in the MarketHub project brief. Screens 
 
 ## Seller dashboard
 
-- [ ] Seller application, business details, and onboarding status.
-- [ ] Store profile and store management.
-- [ ] Product creation, editing, images, pricing, SKU, and moderation status.
-- [ ] Stock management and inventory history.
-- [ ] Seller order processing, shipment updates, and return handling.
-- [ ] Sales, commission, and settlement reports.
+- [x] Seller application, business details, and onboarding status.
+- [x] Store profile and store management.
+- [x] Product creation, editing, image URLs, pricing, SKU, and moderation status.
+- [x] Stock management and inventory adjustments.
+- [x] Seller order processing and shipment updates.
+- [x] Sales and commission reports.
+- [ ] Return handling and settlement disbursement views need backend lifecycle contracts.
 
 ## Admin dashboard
 
-- [ ] Admin sign-in route and dashboard.
-- [ ] Customer and seller management, seller approval, and suspension.
-- [ ] Category management and product moderation.
-- [ ] Order, payment, refund, and coupon management.
-- [ ] Platform reporting and moderation queues.
+- [x] Existing sign-in with admin role guard and admin dashboard.
+- [x] Customer status management, seller application review, and suspension.
+- [x] Category management and product moderation.
+- [x] Order visibility, eligible refund requests, and coupon management.
+- [x] Platform reporting and moderation queues.
 
 ## Shared interface work still required
 
-- Role-specific navigation and nested layouts for customer, seller, and admin areas.
-- Consistent loading, empty, validation, and API failure states across all workflows.
+- [x] Role-specific navigation and nested layouts for customer, seller, and admin areas.
+- [x] Loading, empty, validation, and API failure states across primary workflows.
 - Reusable tables, data filters, pagination, confirmation dialogs, and accessible form controls.
-- Frontend tests for authentication, route access, forms, and shopping flows.
+- [ ] Frontend tests for authentication, route access, forms, and shopping flows (no frontend test runner is configured).
 
 ## Dependency order
 
-Build and verify matching backend contracts before wiring each commerce screen. The product listing/details/discovery screens are ready against the contract below; the next integration milestone is implementing the category/catalog backend. Checkout depends on cart, inventory, address, and pricing APIs, while seller and admin dashboards depend on their respective authorization and management services.
+The screens are wired to the contracts below. The repository backend does not currently implement the catalog/cart/checkout, payment, seller, or admin services, so data workflows show API errors until those backend modules are delivered. Provider checkout also needs a server-issued provider session. Product images currently use URL inputs; secure upload needs a backend storage contract.
 
 ## Catalog frontend API contract
 
@@ -81,3 +82,26 @@ The `/compare` screen loads two to four product details using the same detail en
 - `POST /api/v1/products/{productId}/reviews` accepts `{ orderItemId, rating, title, body }`; the server confirms purchase eligibility and moderates the review.
 - `GET /api/v1/notifications?page=&size=` returns `{ content: [{ id, title, message, createdAt, read, orderId, paymentId }] }`; mark one or all read with `PUT /api/v1/notifications/{id}/read` or `PUT /api/v1/notifications/read-all`.
 - `GET /api/v1/payments/{id}` returns `{ paymentId, orderId, status, amount, currency, canRetry }`; `POST /api/v1/payments/{id}/retry` creates a new provider attempt and returns its current state. Provider checkout UI must use the server-issued payment session and verify the callback server-side.
+
+## Seller frontend API contract
+
+- `GET /api/v1/seller-applications/me` returns the current user's application or not-found; `POST /api/v1/seller-applications` accepts `{ legalName, businessName }` and returns application status.
+- `GET /api/v1/seller/dashboard` returns `{ grossSales, orderCount, pendingOrders, productCount, currency }`.
+- `GET|PUT /api/v1/seller/store` reads or updates `{ name, description }`.
+- `GET /api/v1/seller/products?page=&size=` returns a Spring page of `{ id, name, sku, price, currency, status }`; detail/create/update use `/api/v1/seller/products/{id}` and `/api/v1/seller/products`. `POST /api/v1/seller/products/{id}/deactivate` deactivates a listing.
+- `GET /api/v1/seller/inventory` returns `{ id, productName, sku, onHand, reserved, available }`; `PATCH /api/v1/seller/inventory/{id}` accepts `{ onHand }` and rejects quantities below reserved stock.
+- `GET /api/v1/seller/orders?page=&size=` returns order rows and policy flags (`canAccept`, `canReject`, `canStartProcessing`, `canShip`); `PATCH /api/v1/seller/orders/{id}/status` accepts `{ status }`; shipment creation accepts `{ carrier, trackingNumber }`.
+- `GET /api/v1/seller/reports?from=&to=` returns `{ grossSales, commission, settlement, currency, daily }`.
+
+## Admin frontend API contract
+
+- `GET /api/v1/admin/dashboard` returns platform sales, order/customer/active-seller counts, pending applications, and products awaiting moderation.
+- `GET /api/v1/admin/customers?page=&size=&status=` returns a Spring page; `PATCH /api/v1/admin/customers/{id}/status` accepts `{ status }`.
+- `GET /api/v1/admin/seller-applications?page=&size=&status=` returns a Spring page; `PATCH /api/v1/admin/seller-applications/{id}/decision` accepts `{ status, reason? }`.
+- `GET /api/v1/admin/categories` lists categories; category create/update accepts `{ name, slug, description }`.
+- `GET /api/v1/admin/products?page=&size=&status=` returns a moderation page; `PATCH /api/v1/admin/products/{id}/moderation` accepts `{ status, reason? }`.
+- `GET /api/v1/admin/orders?page=&size=&status=` returns order/payment states and `canRefund`; refund requests accept `{ reason }` and the server must enforce eligibility and confirm provider refunds.
+- `GET /api/v1/admin/coupons` lists rules; create/update accepts code, discount type/value, minimum, usage limit, start/end dates, and active state.
+- `GET /api/v1/admin/reports?from=&to=` returns `{ grossSales, orderCount, commissionTotal, refundTotal, daily }`.
+
+These are frontend contracts, not claims that server endpoints exist. Admin mutations require server-side authorization and audit records; client route guards only control navigation.
