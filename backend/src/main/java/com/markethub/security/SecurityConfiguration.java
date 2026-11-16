@@ -111,6 +111,7 @@ public class SecurityConfiguration {
                                 "/api/v1/auth/refresh", "/api/v1/auth/logout",
                                 "/api/v1/auth/verify-email", "/api/v1/auth/forgot-password",
                                 "/api/v1/auth/reset-password", "/api/v1/auth/resend-verification").permitAll()
+                        .requestMatchers("/api/v1/customer/**").hasRole("CUSTOMER")
                         .anyRequest().authenticated())
                 .oauth2ResourceServer(oauth -> oauth.jwt(jwt ->
                         jwt.jwtAuthenticationConverter(authenticationConverter)));

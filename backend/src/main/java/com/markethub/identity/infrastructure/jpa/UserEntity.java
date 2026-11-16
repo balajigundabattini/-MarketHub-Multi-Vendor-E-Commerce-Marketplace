@@ -77,4 +77,5 @@ public class UserEntity {
     public Set<UserRoleEntity> getUserRoles() { return userRoles; }
     public void setStatus(UserStatus status) { this.status = status; }
     public void setPasswordHash(String passwordHash) { this.passwordHash = passwordHash; }
+    public void setDisplayName(String displayName) { this.displayName = displayName; }
 }

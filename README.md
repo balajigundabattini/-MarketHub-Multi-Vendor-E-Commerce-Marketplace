@@ -13,11 +13,13 @@ The project is being built in phases as a modular monolith: a React frontend, a 
 - Backend scaffold: Java 21, Spring Boot 4.1.2, Maven Wrapper, Actuator, and a health endpoint.
 - Initial identity/catalog/cart MySQL migration: drafted; it has not yet been applied to a local database.
 - Authentication API: customer registration with email verification, login, refresh rotation, logout, password recovery, JWT resource-server validation, and frontend session restoration.
+- Customer profile and address API: authenticated profile updates and owner-scoped delivery address management with default selection and soft deletion.
 - Product workflows, cart/checkout, orders, payments, and seller/admin features: not yet implemented.
 
 See [Phase 1 requirements and scope](docs/phase-1-requirements-and-scope.md) for roles, business rules, MVP boundaries, and implementation dependencies.
 
 Authentication design, endpoints, security choices, and completion status are documented in [Phase 4 authentication](docs/phase-4-authentication.md).
+Customer profile and address behavior is documented in [Phase 5 customer profile and addresses](docs/phase-5-customer-profile-and-addresses.md).
 
 Architecture and data model decisions are tracked in [Phase 2 architecture](docs/phase-2-architecture.md) and [Phase 3 database design](docs/phase-3-database-design.md).
 

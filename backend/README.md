@@ -41,6 +41,8 @@ Actuator health: `GET http://localhost:8080/actuator/health`
 
 Authentication routes are `POST /api/v1/auth/register`, `/verify-email`, `/resend-verification`, `/login`, `/refresh`, `/logout`, `/forgot-password`, and `/reset-password`. Registration accepts `displayName`, `email`, and `password` and always creates a pending customer account. Access tokens are returned in JSON for in-memory frontend use after verification and login; the rotating refresh token is an HttpOnly cookie. Refresh and logout use the signed `XSRF-TOKEN` double-submit cookie/header. Action tokens are single-use and stored as hashes.
 
+Customer routes require a valid access token with the `CUSTOMER` role. Use `GET`/`PUT /api/v1/customer/profile` for the signed-in account, and `GET`/`POST /api/v1/customer/addresses`, `PUT`/`DELETE /api/v1/customer/addresses/{id}`, or `POST /api/v1/customer/addresses/{id}/default` for saved delivery addresses. The user ID is read from the verified JWT subject; requests cannot provide another owner's ID. Deleted addresses are deactivated rather than physically removed.
+
 ## Run tests
 
 ```powershell
