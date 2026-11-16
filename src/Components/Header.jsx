@@ -24,6 +24,8 @@ const Header = () => {
           <span>MarketHub</span>
         </Link>
         <nav className="header-actions" aria-label="Main navigation">
+          <Link to="/products">Shop</Link>
+          <Link to="/products">Shop</Link>
           {roles.includes('CUSTOMER') && <Link to="/account">Account</Link>}
           {!loading && !user && <Link to="/login">Sign in</Link>}
           {!loading && !user && <Link className="header-register" to="/register">Join MarketHub</Link>}

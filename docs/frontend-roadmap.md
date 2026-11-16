@@ -8,12 +8,14 @@ This tracks the React screens requested in the MarketHub project brief. Screens 
 - In-memory token handling with a shared auth context, sign-out, and a role-aware protected-route component.
 - Customer account page for profile and delivery address management, connected to the API.
 - Shared responsive shell and API client.
+- Public product listing/search/filter/sort/pagination and product detail screens, wired to the catalog API contract below.
 
 ## Customer application
 
 - [x] Home, login, registration, profile, address book.
-- [ ] Product listing, category navigation, search, sorting, filters, pagination, and compare.
-- [ ] Product detail and image gallery.
+- [x] Product listing, search, category/price filters, sorting, and pagination screen.
+- [x] Product detail screen and primary product image.
+- [x] Compare up to four products and their available specifications.
 - [ ] Cart and wishlist.
 - [ ] Checkout, address selection, coupon entry, and payment status.
 - [ ] Order history, seller suborders, tracking, cancellation, and returns.
@@ -45,4 +47,15 @@ This tracks the React screens requested in the MarketHub project brief. Screens 
 
 ## Dependency order
 
-Build and verify matching backend contracts before wiring each commerce screen. The next data-backed frontend milestone is product listing/details and discovery after category/catalog APIs are available; checkout depends on cart, inventory, address, and pricing APIs, while seller and admin dashboards depend on their respective authorization and management services.
+Build and verify matching backend contracts before wiring each commerce screen. The product listing/details/discovery screens are ready against the contract below; the next integration milestone is implementing the category/catalog backend. Checkout depends on cart, inventory, address, and pricing APIs, while seller and admin dashboards depend on their respective authorization and management services.
+
+## Catalog frontend API contract
+
+The catalog pages call these public endpoints; the backend catalog phase must implement this contract or update both sides together:
+
+- `GET /api/v1/catalog/categories` returns an array of active categories: `{ id, name, slug }`.
+- `GET /api/v1/catalog/products` accepts `search`, `category` (slug), `minPrice`, `maxPrice`, `sort` (`newest`, `price_asc`, `price_desc`, `name_asc`), zero-based `page`, and `size`.
+- Product listing responses use Spring page fields: `{ content, number, size, totalElements, totalPages }`; each item has `{ id, name, brand, price, currency, storeName, imageUrl, imageAlt }`.
+- `GET /api/v1/catalog/products/{id}` returns `{ id, name, brand, description, price, currency, storeName, categoryName, images: [{ url, altText }], specifications: [{ name, value }] }`.
+
+The `/compare` screen loads two to four product details using the same detail endpoint. The screens show API loading, empty, and failure states. They do not fabricate catalog items while the backend endpoints are unavailable.

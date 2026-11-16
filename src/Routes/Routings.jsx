@@ -7,11 +7,17 @@ import ForgotPassword from '../Pages/ForgotPassword'
 import ResetPassword from '../Pages/ResetPassword'
 import Account from '../Pages/Account'
 import ProtectedRoute from '../auth/ProtectedRoute'
+import Catalog from '../Pages/Catalog'
+import ProductDetails from '../Pages/ProductDetails'
+import ProductCompare from '../Pages/ProductCompare'
 
 const Routings = () => {
   return (
     <Routes>
       <Route path="/" element={<Home />} />
+      <Route path="/products" element={<Catalog />} />
+      <Route path="/products/:productId" element={<ProductDetails />} />
+      <Route path="/compare" element={<ProductCompare />} />
       <Route path="/register" element={<Register />} />
       <Route path="/login" element={<Login />} />
       <Route path="/verify-email" element={<VerifyEmail />} />
