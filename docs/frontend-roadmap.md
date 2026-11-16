@@ -52,7 +52,7 @@ This tracks the React screens requested in the MarketHub project brief. Screens 
 
 ## Dependency order
 
-The screens are wired to the contracts below. The repository backend does not currently implement the catalog/cart/checkout, payment, seller, or admin services, so data workflows show API errors until those backend modules are delivered. Provider checkout also needs a server-issued provider session. Product images currently use URL inputs; secure upload needs a backend storage contract.
+The screens are wired to the contracts below. The backend currently implements identity, customer profile/address, seller application review, and seller store profile APIs. Catalog, cart/checkout, payment, seller product/inventory/orders/reports, and admin management services are still outstanding, so those data workflows show API errors until the backend modules are delivered. Provider checkout needs a server-issued provider session. Product images currently use URL inputs; secure upload needs a backend storage contract.
 
 ## Catalog frontend API contract
 
@@ -85,6 +85,8 @@ The `/compare` screen loads two to four product details using the same detail en
 
 ## Seller frontend API contract
 
+Application and store profile endpoints are implemented in backend Phase 6. The other seller endpoints below are frontend contracts for upcoming backend work.
+
 - `GET /api/v1/seller-applications/me` returns the current user's application or not-found; `POST /api/v1/seller-applications` accepts `{ legalName, businessName }` and returns application status.
 - `GET /api/v1/seller/dashboard` returns `{ grossSales, orderCount, pendingOrders, productCount, currency }`.
 - `GET|PUT /api/v1/seller/store` reads or updates `{ name, description }`.
@@ -94,6 +96,8 @@ The `/compare` screen loads two to four product details using the same detail en
 - `GET /api/v1/seller/reports?from=&to=` returns `{ grossSales, commission, settlement, currency, daily }`.
 
 ## Admin frontend API contract
+
+Seller application listing and approval/rejection endpoints are implemented in backend Phase 6. The other admin endpoints below remain future frontend contracts.
 
 - `GET /api/v1/admin/dashboard` returns platform sales, order/customer/active-seller counts, pending applications, and products awaiting moderation.
 - `GET /api/v1/admin/customers?page=&size=&status=` returns a Spring page; `PATCH /api/v1/admin/customers/{id}/status` accepts `{ status }`.
