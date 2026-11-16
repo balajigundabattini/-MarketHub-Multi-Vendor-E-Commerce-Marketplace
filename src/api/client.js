@@ -1,5 +1,5 @@
 import axios from 'axios'
-import { clearAccessToken, getAccessToken, setAccessToken } from './accessToken'
+import { clearAccessToken, getAccessToken, setSession } from './accessToken'
 
 const apiClient = axios.create({
   baseURL: import.meta.env.VITE_API_BASE_URL || 'http://localhost:8080/api/v1',
@@ -18,7 +18,7 @@ export const restoreSession = async () => {
   if (!refreshRequest) {
     refreshRequest = apiClient.post('/auth/refresh')
       .then(({ data }) => {
-        setAccessToken(data.accessToken)
+        setSession(data.accessToken, data.user)
         return data.accessToken
       })
       .finally(() => {

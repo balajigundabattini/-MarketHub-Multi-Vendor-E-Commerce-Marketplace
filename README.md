@@ -20,6 +20,7 @@ See [Phase 1 requirements and scope](docs/phase-1-requirements-and-scope.md) for
 
 Authentication design, endpoints, security choices, and completion status are documented in [Phase 4 authentication](docs/phase-4-authentication.md).
 Customer profile and address behavior is documented in [Phase 5 customer profile and addresses](docs/phase-5-customer-profile-and-addresses.md).
+See the [frontend delivery roadmap](docs/frontend-roadmap.md) for the requested customer, seller, and admin screens and their backend dependencies.
 
 Architecture and data model decisions are tracked in [Phase 2 architecture](docs/phase-2-architecture.md) and [Phase 3 database design](docs/phase-3-database-design.md).
 

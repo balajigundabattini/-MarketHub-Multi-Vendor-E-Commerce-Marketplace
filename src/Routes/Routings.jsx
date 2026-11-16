@@ -6,6 +6,7 @@ import VerifyEmail from '../Pages/VerifyEmail'
 import ForgotPassword from '../Pages/ForgotPassword'
 import ResetPassword from '../Pages/ResetPassword'
 import Account from '../Pages/Account'
+import ProtectedRoute from '../auth/ProtectedRoute'
 
 const Routings = () => {
   return (
@@ -16,7 +17,8 @@ const Routings = () => {
       <Route path="/verify-email" element={<VerifyEmail />} />
       <Route path="/forgot-password" element={<ForgotPassword />} />
       <Route path="/reset-password" element={<ResetPassword />} />
-      <Route path="/account" element={<Account />} />
+      <Route path="/account" element={<ProtectedRoute allowedRoles={['CUSTOMER']}><Account /></ProtectedRoute>} />
+      <Route path="/forbidden" element={<main className="container py-5"><h1>Access denied</h1><p>Your account is not permitted to open this page.</p></main>} />
       <Route path="/home" element={<Navigate to="/" replace />} />
       <Route path="*" element={<Navigate to="/" replace />} />
     </Routes>

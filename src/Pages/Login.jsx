@@ -1,13 +1,15 @@
 import { useState } from 'react'
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import apiClient from '../api/client'
-import { setAccessToken } from '../api/accessToken'
+import { useAuth } from '../auth/useAuth'
 
 const Login = () => {
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
     const navigate = useNavigate();
+    const location = useLocation();
+    const { signIn } = useAuth();
 
 
     const submitHandler = async (e) => {
@@ -18,9 +20,11 @@ const Login = () => {
 
         try {
             const response = await apiClient.post('/auth/login', userData);
-            setAccessToken(response.data.accessToken)
+            signIn(response.data)
             toast.success("Login successfully");
-            navigate("/");
+            const destination = location.state?.from?.pathname
+                || ((response.data.user.roles || []).includes('CUSTOMER') ? "/account" : "/");
+            navigate(destination, { replace: true });
 
         } catch (err) {
             toast.error(err.response?.data?.detail || "Login failed");

@@ -33,6 +33,7 @@ Reset request JSON: `{ "email": "buyer@example.com" }`. Reset JSON: `{ "token": 
 - Verification and recovery tokens are random, single-use, expire after 24 hours and 30 minutes respectively, and are stored only as SHA-256 hashes in `identity_action_tokens` (Flyway V2).
 - SMTP connection details are environment variables. Local account flows need a local mail catcher or SMTP server configured at `SMTP_HOST`/`SMTP_PORT`.
 - The forgot-password and resend-verification responses do not reveal whether an address is registered. Delivery failures are logged server-side.
+- The React `AuthProvider` restores user identity from the refresh endpoint, stores access tokens only in memory, and exposes role-aware protected routes. The account route requires the `CUSTOMER` role; backend authorization remains the enforcement boundary.
 
 ## Verification status
 
