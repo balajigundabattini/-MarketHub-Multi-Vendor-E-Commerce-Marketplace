@@ -48,4 +48,5 @@ public class StoreEntity {
     public String getSlug() { return slug; }
     public String getDescription() { return description; }
     public String getStatus() { return status; }
+    public SellerEntity getSeller() { return seller; }
 }

@@ -41,4 +41,4 @@ The decision record uses the existing `reviewed_by`, `reviewed_at`, and `review_
 
 ## Remaining seller work
 
-This phase does not yet implement product listings, image uploads, stock adjustments, seller orders, reports, suspension controls, or store suspension. Those use separate APIs and should be implemented before connecting catalog discovery and checkout to real inventory.
+Phase 7 adds product listings and stock adjustments. Image uploads, seller orders, reports, suspension controls, and store suspension still need separate APIs and workflows.

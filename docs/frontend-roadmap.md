@@ -52,18 +52,18 @@ This tracks the React screens requested in the MarketHub project brief. Screens 
 
 ## Dependency order
 
-The screens are wired to the contracts below. The backend currently implements identity, customer profile/address, seller application review, and seller store profile APIs. Catalog, cart/checkout, payment, seller product/inventory/orders/reports, and admin management services are still outstanding, so those data workflows show API errors until the backend modules are delivered. Provider checkout needs a server-issued provider session. Product images currently use URL inputs; secure upload needs a backend storage contract.
+The backend currently implements identity, customer profile/address, seller onboarding/store management, catalog discovery, seller product/inventory management, and category/product moderation. Cart/checkout, payment, seller orders/reports, and other admin services are still outstanding. Provider checkout needs a server-issued provider session. Product images currently use URL inputs; secure upload needs a backend storage contract.
 
 ## Catalog frontend API contract
 
-The catalog pages call these public endpoints; the backend catalog phase must implement this contract or update both sides together:
+The catalog pages call these public endpoints, implemented in backend Phase 7:
 
 - `GET /api/v1/catalog/categories` returns an array of active categories: `{ id, name, slug }`.
 - `GET /api/v1/catalog/products` accepts `search`, `category` (slug), `minPrice`, `maxPrice`, `sort` (`newest`, `price_asc`, `price_desc`, `name_asc`), zero-based `page`, and `size`.
 - Product listing responses use Spring page fields: `{ content, number, size, totalElements, totalPages }`; each item has `{ id, name, brand, price, currency, storeName, imageUrl, imageAlt }`.
 - `GET /api/v1/catalog/products/{id}` returns `{ id, name, brand, description, price, currency, storeName, categoryName, images: [{ url, altText }], specifications: [{ name, value }] }`.
 
-The `/compare` screen loads two to four product details using the same detail endpoint. The screens show API loading, empty, and failure states. They do not fabricate catalog items while the backend endpoints are unavailable.
+The `/compare` screen loads two to four product details using the same detail endpoint. The screens show API loading, empty, and failure states and do not fabricate catalog items.
 
 ## Cart and checkout frontend API contract
 
@@ -85,25 +85,25 @@ The `/compare` screen loads two to four product details using the same detail en
 
 ## Seller frontend API contract
 
-Application and store profile endpoints are implemented in backend Phase 6. The other seller endpoints below are frontend contracts for upcoming backend work.
+Application/store profile endpoints are implemented in backend Phase 6. Product and inventory endpoints are implemented in backend Phase 7. Seller orders and reporting remain future backend work.
 
 - `GET /api/v1/seller-applications/me` returns the current user's application or not-found; `POST /api/v1/seller-applications` accepts `{ legalName, businessName }` and returns application status.
 - `GET /api/v1/seller/dashboard` returns `{ grossSales, orderCount, pendingOrders, productCount, currency }`.
 - `GET|PUT /api/v1/seller/store` reads or updates `{ name, description }`.
-- `GET /api/v1/seller/products?page=&size=` returns a Spring page of `{ id, name, sku, price, currency, status }`; detail/create/update use `/api/v1/seller/products/{id}` and `/api/v1/seller/products`. `POST /api/v1/seller/products/{id}/deactivate` deactivates a listing.
-- `GET /api/v1/seller/inventory` returns `{ id, productName, sku, onHand, reserved, available }`; `PATCH /api/v1/seller/inventory/{id}` accepts `{ onHand }` and rejects quantities below reserved stock.
+- `GET /api/v1/seller/products?page=&size=` returns a Spring page of product data; detail/create/update use `/api/v1/seller/products/{id}` and `/api/v1/seller/products`. `POST /api/v1/seller/products/{id}/deactivate` deactivates a listing. New and edited listings enter moderation.
+- `GET /api/v1/seller/inventory` returns rows `{ productId, name, sku, onHand, reserved, available }`; `PATCH /api/v1/seller/inventory/{productId}` accepts `{ onHand, reason }`, locks the stock row, and rejects quantities below reserved stock.
 - `GET /api/v1/seller/orders?page=&size=` returns order rows and policy flags (`canAccept`, `canReject`, `canStartProcessing`, `canShip`); `PATCH /api/v1/seller/orders/{id}/status` accepts `{ status }`; shipment creation accepts `{ carrier, trackingNumber }`.
 - `GET /api/v1/seller/reports?from=&to=` returns `{ grossSales, commission, settlement, currency, daily }`.
 
 ## Admin frontend API contract
 
-Seller application listing and approval/rejection endpoints are implemented in backend Phase 6. The other admin endpoints below remain future frontend contracts.
+Seller application listing and approval/rejection endpoints are implemented in backend Phase 6. Category management and product moderation are implemented in backend Phase 7. Other admin endpoints below remain future frontend contracts.
 
 - `GET /api/v1/admin/dashboard` returns platform sales, order/customer/active-seller counts, pending applications, and products awaiting moderation.
 - `GET /api/v1/admin/customers?page=&size=&status=` returns a Spring page; `PATCH /api/v1/admin/customers/{id}/status` accepts `{ status }`.
 - `GET /api/v1/admin/seller-applications?page=&size=&status=` returns a Spring page; `PATCH /api/v1/admin/seller-applications/{id}/decision` accepts `{ status, reason? }`.
-- `GET /api/v1/admin/categories` lists categories; category create/update accepts `{ name, slug, description }`.
-- `GET /api/v1/admin/products?page=&size=&status=` returns a moderation page; `PATCH /api/v1/admin/products/{id}/moderation` accepts `{ status, reason? }`.
+- `GET /api/v1/admin/categories` lists categories; category create/update accepts `{ name, slug, description }`; `PATCH /api/v1/admin/categories/{id}/status` accepts `{ active }` for soft activation/deactivation.
+- `GET /api/v1/admin/products?page=&size=&status=` returns a product page; `PATCH /api/v1/admin/products/{id}/moderation` accepts `{ status: ACTIVE|REJECTED }` for products awaiting review.
 - `GET /api/v1/admin/orders?page=&size=&status=` returns order/payment states and `canRefund`; refund requests accept `{ reason }` and the server must enforce eligibility and confirm provider refunds.
 - `GET /api/v1/admin/coupons` lists rules; create/update accepts code, discount type/value, minimum, usage limit, start/end dates, and active state.
 - `GET /api/v1/admin/reports?from=&to=` returns `{ grossSales, orderCount, commissionTotal, refundTotal, daily }`.

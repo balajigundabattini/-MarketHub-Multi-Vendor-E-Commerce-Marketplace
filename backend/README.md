@@ -1,6 +1,6 @@
 # MarketHub backend
 
-Java 21 and Spring Boot API for the MarketHub modular monolith. Implemented endpoints include health checks and customer registration, login, refresh, and logout.
+Java 21 and Spring Boot API for the MarketHub modular monolith. Implemented endpoints include health, identity, customer profile/address, seller onboarding/store management, public catalog discovery, seller product/inventory management, and admin category/product moderation.
 
 ## Prerequisites
 
@@ -43,10 +43,16 @@ Authentication routes are `POST /api/v1/auth/register`, `/verify-email`, `/resen
 
 Customer routes require a valid access token with the `CUSTOMER` role. Use `GET`/`PUT /api/v1/customer/profile` for the signed-in account, and `GET`/`POST /api/v1/customer/addresses`, `PUT`/`DELETE /api/v1/customer/addresses/{id}`, or `POST /api/v1/customer/addresses/{id}/default` for saved delivery addresses. The user ID is read from the verified JWT subject; requests cannot provide another owner's ID. Deleted addresses are deactivated rather than physically removed.
 
+Seller onboarding is available at `GET|POST /api/v1/seller-applications` (including `GET /me`). Administrators review applications under `/api/v1/admin/seller-applications`; approval grants the seller role and creates the initial store transactionally. Approved sellers can manage their store at `GET|PUT /api/v1/seller/store`.
+
+Public catalog routes are `GET /api/v1/catalog/categories`, `GET /api/v1/catalog/products`, and `GET /api/v1/catalog/products/{id}`. Seller-owned product and inventory routes use `/api/v1/seller/products` and `/api/v1/seller/inventory`. New or edited products require admin moderation before they appear in public discovery. Admin category and product moderation routes use `/api/v1/admin/categories` and `/api/v1/admin/products`. Every seller/admin endpoint is role guarded, and seller product/stock operations resolve ownership from the authenticated principal.
+
+Cart/checkout, orders, payments, seller fulfillment/reports, and most admin operations are not implemented yet. See [Phase 6 seller management](../docs/phase-6-seller-management.md) and [Phase 7 catalog and products](../docs/phase-7-catalog-and-products.md) for the implemented workflows and their boundaries.
+
 ## Run tests
 
 ```powershell
 ./mvnw.cmd test
 ```
 
-The automated backend suite includes health, JWT, and CSRF-token unit tests. Running against MySQL additionally requires a configured local database; Flyway migrations and Hibernate schema validation run on application startup.
+The automated backend suite includes health, identity, address, seller application, catalog filter, and seller ownership tests. Running against MySQL additionally requires a configured local database; Flyway migrations and Hibernate schema validation run on application startup.

@@ -7,8 +7,9 @@ export const fetchAdminSellerApplications = async (params) => (await apiClient.g
 export const reviewSellerApplication = async (id, status, reason) => (await apiClient.patch(`/admin/seller-applications/${encodeURIComponent(id)}/decision`, { status, reason })).data
 export const fetchAdminCategories = async () => (await apiClient.get('/admin/categories')).data
 export const saveAdminCategory = async (id, request) => id ? (await apiClient.put(`/admin/categories/${encodeURIComponent(id)}`, request)).data : (await apiClient.post('/admin/categories', request)).data
+export const setAdminCategoryActive = async (id, active) => (await apiClient.patch(`/admin/categories/${encodeURIComponent(id)}/status`, { active })).data
 export const fetchAdminProducts = async (params) => (await apiClient.get('/admin/products', { params })).data
-export const moderateAdminProduct = async (id, status, reason) => (await apiClient.patch(`/admin/products/${encodeURIComponent(id)}/moderation`, { status, reason })).data
+export const moderateAdminProduct = async (id, status, reason) => (await apiClient.patch(`/admin/products/${encodeURIComponent(id)}/moderation`, { status: status === 'APPROVED' ? 'ACTIVE' : status, reason })).data
 export const fetchAdminOrders = async (params) => (await apiClient.get('/admin/orders', { params })).data
 export const refundAdminOrder = async (id, request) => (await apiClient.post(`/admin/orders/${encodeURIComponent(id)}/refunds`, request)).data
 export const fetchAdminCoupons = async () => (await apiClient.get('/admin/coupons')).data

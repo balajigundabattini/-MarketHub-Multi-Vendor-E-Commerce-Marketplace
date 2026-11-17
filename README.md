@@ -4,23 +4,25 @@ MarketHub is a portfolio project for a multi-vendor marketplace. Customers will 
 
 Project repository: [balajigundabattini/-MarketHub-Multi-Vendor-E-Commerce-Marketplace](https://github.com/balajigundabattini/-MarketHub-Multi-Vendor-E-Commerce-Marketplace)
 
-The project is being built in phases as a modular monolith: a React frontend, a Java 21 / Spring Boot REST backend, and MySQL. The frontend shell and initial backend are in place, and customer registration/login with JWT access and rotating refresh tokens is implemented. Marketplace catalog and order workflows are still upcoming.
+The project is being built in phases as a modular monolith: a React frontend, a Java 21 / Spring Boot REST backend, and MySQL. Customer identity/profile/address flows, seller onboarding, catalog discovery, seller product/inventory management, and category/product moderation are implemented. Cart/checkout, orders, and payment workflows are still upcoming.
 
 ## Current status
 
 - Project identity and initial requirements/scope are established.
 - Frontend scaffold: React, Vite, JavaScript, React Router, Redux Toolkit, Axios, and Bootstrap.
 - Backend scaffold: Java 21, Spring Boot 4.1.2, Maven Wrapper, Actuator, and a health endpoint.
-- Initial identity/catalog/cart MySQL migration: drafted; it has not yet been applied to a local database.
+- Flyway migrations define identity, customer, seller, catalog, and shopping foundations; the local database migration state still needs verification.
 - Authentication API: customer registration with email verification, login, refresh rotation, logout, password recovery, JWT resource-server validation, and frontend session restoration.
 - Customer profile and address API: authenticated profile updates and owner-scoped delivery address management with default selection and soft deletion.
-- Product workflows, cart/checkout, orders, payments, and seller/admin features: not yet implemented.
+- Seller application review, store profiles, seller product and inventory APIs, public catalog discovery, and admin category/product moderation.
+- Cart/checkout, orders, payments, seller fulfillment/reports, and most admin operations: not yet implemented.
 
 See [Phase 1 requirements and scope](docs/phase-1-requirements-and-scope.md) for roles, business rules, MVP boundaries, and implementation dependencies.
 
 Authentication design, endpoints, security choices, and completion status are documented in [Phase 4 authentication](docs/phase-4-authentication.md).
 Customer profile and address behavior is documented in [Phase 5 customer profile and addresses](docs/phase-5-customer-profile-and-addresses.md).
 See the [frontend delivery roadmap](docs/frontend-roadmap.md) for the requested customer, seller, and admin screens and their backend dependencies.
+Seller onboarding and role grants are documented in [Phase 6](docs/phase-6-seller-management.md). Catalog, seller product/inventory, and moderation APIs are documented in [Phase 7](docs/phase-7-catalog-and-products.md).
 
 Architecture and data model decisions are tracked in [Phase 2 architecture](docs/phase-2-architecture.md) and [Phase 3 database design](docs/phase-3-database-design.md).
 

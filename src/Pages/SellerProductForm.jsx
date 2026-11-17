@@ -53,7 +53,7 @@ const SellerProductForm = () => {
         <div className="col-12"><label className="form-label" htmlFor="product-description">Description</label><textarea id="product-description" className="form-control" rows="6" maxLength={20000} required value={form.description} onChange={(event) => setForm({ ...form, description: event.target.value })} /></div>
         <div className="col-12"><label className="form-label" htmlFor="product-images">Image URLs (one per line)</label><textarea id="product-images" className="form-control" rows="3" value={form.imageUrls} onChange={(event) => setForm({ ...form, imageUrls: event.target.value })} /><div className="form-text">Image upload/storage will be connected when the media service is implemented.</div></div>
       </div>
-      <div className="d-flex gap-2 mt-4"><button className="btn btn-primary" type="submit" disabled={busy || categories.length === 0}>{busy ? 'Saving…' : 'Save as draft'}</button><Link className="btn btn-outline-secondary" to="/seller/products">Cancel</Link></div>
+      <div className="d-flex gap-2 mt-4"><button className="btn btn-primary" type="submit" disabled={busy || categories.length === 0}>{busy ? 'Saving…' : 'Submit for review'}</button><Link className="btn btn-outline-secondary" to="/seller/products">Cancel</Link></div>
     </form>
   </main>
 }
