@@ -67,7 +67,7 @@ The `/compare` screen loads two to four product details using the same detail en
 
 ## Cart and checkout frontend API contract
 
-Cart and wishlist endpoints in this contract are implemented in backend Phase 8; checkout remains future backend work.
+Cart and wishlist endpoints are implemented in backend Phase 8. Checkout quotes and customer orders are implemented in backend Phase 9; payment-provider sessions remain future backend work.
 
 - `GET /api/v1/cart` returns `{ items: [{ id, productId, name, quantity, availableQuantity, unitPrice, lineTotal, currency, imageUrl, imageAlt, sellerName }], subtotal, currency }`.
 - `PUT /api/v1/cart/items/{id}` accepts `{ quantity }`; `DELETE /api/v1/cart/items/{id}` removes the line. Both mutations return the updated cart representation.

@@ -49,7 +49,7 @@ Public catalog routes are `GET /api/v1/catalog/categories`, `GET /api/v1/catalog
 
 The authenticated customer cart and wishlist routes use `/api/v1/cart` and `/api/v1/wishlist`. Cart prices are read from current product data; the cart does not reserve stock and is not an authoritative checkout quote. Cart and wishlist operations are scoped to the authenticated customer's IDs.
 
-Checkout, orders, payments, seller fulfillment/reports, and most admin operations are not implemented yet. See [Phase 6 seller management](../docs/phase-6-seller-management.md), [Phase 7 catalog and products](../docs/phase-7-catalog-and-products.md), and [Phase 8 cart and wishlist](../docs/phase-8-cart-and-wishlist.md) for the implemented workflows and their boundaries.
+Checkout quotes/order placement, customer order history and requests, and admin coupon management are implemented. Payment provider integration, seller fulfillment/reports, and remaining admin operations are pending. See [Phase 6 seller management](../docs/phase-6-seller-management.md), [Phase 7 catalog and products](../docs/phase-7-catalog-and-products.md), [Phase 8 cart and wishlist](../docs/phase-8-cart-and-wishlist.md), and [Phase 9 checkout and orders](../docs/phase-9-checkout-and-orders.md) for workflow details and boundaries.
 
 ## Run tests
 

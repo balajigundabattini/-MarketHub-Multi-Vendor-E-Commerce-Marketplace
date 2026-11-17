@@ -115,7 +115,7 @@ public class SecurityConfiguration {
                         .requestMatchers("/api/v1/admin/**").hasRole("ADMIN")
                         .requestMatchers("/api/v1/seller/**").hasRole("SELLER")
                         .requestMatchers("/api/v1/seller-applications/**").hasRole("CUSTOMER")
-                        .requestMatchers("/api/v1/cart/**", "/api/v1/wishlist/**").hasRole("CUSTOMER")
+                        .requestMatchers("/api/v1/cart/**", "/api/v1/wishlist/**", "/api/v1/checkout/**", "/api/v1/orders/**").hasRole("CUSTOMER")
                         .requestMatchers("/api/v1/customer/**").hasRole("CUSTOMER")
                         .anyRequest().authenticated())
                 .oauth2ResourceServer(oauth -> oauth.jwt(jwt ->

@@ -10,8 +10,13 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
+import org.springframework.data.jpa.repository.Lock;
+import jakarta.persistence.LockModeType;
 
 public interface ProductRepository extends JpaRepository<ProductEntity, Long>, JpaSpecificationExecutor<ProductEntity> {
+    @Lock(LockModeType.PESSIMISTIC_WRITE)
+    @Query("select p from ProductEntity p where p.id = :productId")
+    Optional<ProductEntity> findByIdForUpdate(@Param("productId") Long productId);
     @EntityGraph(attributePaths = {"category", "store", "store.seller"})
     Page<ProductEntity> findAllByStoreId(Long storeId, Pageable pageable);
     @EntityGraph(attributePaths = {"category", "store", "store.seller", "images"})

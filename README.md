@@ -4,19 +4,19 @@ MarketHub is a portfolio project for a multi-vendor marketplace. Customers will 
 
 Project repository: [balajigundabattini/-MarketHub-Multi-Vendor-E-Commerce-Marketplace](https://github.com/balajigundabattini/-MarketHub-Multi-Vendor-E-Commerce-Marketplace)
 
-The project is being built in phases as a modular monolith: a React frontend, a Java 21 / Spring Boot REST backend, and MySQL. Customer identity/profile/address, seller onboarding, catalog discovery, seller product/inventory, category/product moderation, cart, and wishlist workflows are implemented. Checkout, orders, and payments are still upcoming.
+The project is being built in phases as a modular monolith: a React frontend, a Java 21 / Spring Boot REST backend, and MySQL. Customer identity/profile/address, seller onboarding, catalog discovery, seller product/inventory, category/product moderation, cart, wishlist, checkout quotes, coupon administration, and customer order workflows are implemented. Payment provider integration and seller fulfillment remain upcoming.
 
 ## Current status
 
 - Project identity and initial requirements/scope are established.
 - Frontend scaffold: React, Vite, JavaScript, React Router, Redux Toolkit, Axios, and Bootstrap.
 - Backend scaffold: Java 21, Spring Boot 4.1.2, Maven Wrapper, Actuator, and a health endpoint.
-- Flyway migrations define identity, customer, seller, catalog, and shopping foundations; the local database migration state still needs verification.
+- Flyway migrations define identity, customer, seller, catalog, shopping, checkout, coupon, and order tables; applying them and validating against a configured local database is still required.
 - Authentication API: customer registration with email verification, login, refresh rotation, logout, password recovery, JWT resource-server validation, and frontend session restoration.
 - Customer profile and address API: authenticated profile updates and owner-scoped delivery address management with default selection and soft deletion.
 - Seller application review, store profiles, seller product and inventory APIs, public catalog discovery, and admin category/product moderation.
 - Persistent customer cart and wishlist APIs with current price/stock checks.
-- Checkout, orders, payments, seller fulfillment/reports, and most admin operations: not yet implemented.
+- Payments, seller fulfillment/reports, and remaining admin operations: not yet implemented.
 
 See [Phase 1 requirements and scope](docs/phase-1-requirements-and-scope.md) for roles, business rules, MVP boundaries, and implementation dependencies.
 

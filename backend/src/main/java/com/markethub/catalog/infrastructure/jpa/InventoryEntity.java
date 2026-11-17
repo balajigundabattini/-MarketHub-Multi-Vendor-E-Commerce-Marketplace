@@ -16,6 +16,9 @@ public class InventoryEntity {
     protected InventoryEntity() { }
     public InventoryEntity(Long productId) { this.productId = productId; }
     public void setOnHand(int onHand) { if (onHand < reserved) throw new IllegalArgumentException("On-hand stock cannot be less than reserved stock"); this.onHand = onHand; }
+    public void reserve(int quantity) { if (quantity < 1 || getAvailable() < quantity) throw new IllegalStateException("Insufficient available stock"); reserved += quantity; }
+    public void release(int quantity) { if (quantity < 1 || reserved < quantity) throw new IllegalStateException("Invalid stock reservation release"); reserved -= quantity; }
+    public void commitReservation(int quantity) { release(quantity); if (onHand < quantity) throw new IllegalStateException("Reserved stock exceeds on-hand quantity"); onHand -= quantity; }
     public Long getProductId() { return productId; }
     public int getOnHand() { return onHand; }
     public int getReserved() { return reserved; }
