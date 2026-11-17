@@ -73,6 +73,7 @@ public class UserEntity {
     public String getEmail() { return email; }
     public String getPasswordHash() { return passwordHash; }
     public String getDisplayName() { return displayName; }
+    public Instant getCreatedAt() { return createdAt; }
     public UserStatus getStatus() { return status; }
     public Set<UserRoleEntity> getUserRoles() { return userRoles; }
     public void setStatus(UserStatus status) { this.status = status; }

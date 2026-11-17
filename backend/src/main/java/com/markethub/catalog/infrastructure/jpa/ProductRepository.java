@@ -32,6 +32,9 @@ public interface ProductRepository extends JpaRepository<ProductEntity, Long>, J
 
     boolean existsByStoreIdAndSkuIgnoreCase(Long storeId, String sku);
     boolean existsByStoreIdAndSkuIgnoreCaseAndIdNot(Long storeId, String sku, Long id);
+    long countByStore_Seller_User_IdAndStatus(Long userId, ProductStatus status);
+    long countByStatus(ProductStatus status);
+    java.util.List<ProductEntity> findAllByStore_Seller_User_Id(Long userId);
 
     @EntityGraph(attributePaths = {"category", "store", "store.seller"})
     @Query("select p from ProductEntity p join p.store s join s.seller seller join p.category c " +

@@ -34,7 +34,7 @@ public class SellerOrderEntity {
     @OneToMany(mappedBy = "sellerOrder") private List<OrderItemEntity> items = new ArrayList<>();
     @OneToMany(mappedBy = "sellerOrder") private List<ShipmentEntity> shipments = new ArrayList<>();
     protected SellerOrderEntity() { }
-    public SellerOrderEntity(OrderEntity order, SellerEntity seller, String storeName, String status, BigDecimal subtotal) { this.order = order; this.seller = seller; this.storeNameSnapshot = storeName; this.status = status; this.subtotal = subtotal; }
+    public SellerOrderEntity(OrderEntity order, SellerEntity seller, String storeName, String status, BigDecimal subtotal, BigDecimal commission) { this.order = order; this.seller = seller; this.storeNameSnapshot = storeName; this.status = status; this.subtotal = subtotal; this.commission = commission; }
     public void setStatus(String status) { this.status = status; }
     @PrePersist void beforeInsert() { Instant now = Instant.now(); createdAt = now; updatedAt = now; }
     @PreUpdate void beforeUpdate() { updatedAt = Instant.now(); }
@@ -45,6 +45,7 @@ public class SellerOrderEntity {
     public String getStoreNameSnapshot() { return storeNameSnapshot; }
     public String getStatus() { return status; }
     public BigDecimal getSubtotal() { return subtotal; }
+    public BigDecimal getCommission() { return commission; }
     public List<OrderItemEntity> getItems() { return items; }
     public List<ShipmentEntity> getShipments() { return shipments; }
 }

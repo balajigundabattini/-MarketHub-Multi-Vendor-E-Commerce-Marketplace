@@ -10,6 +10,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 public interface SellerRepository extends JpaRepository<SellerEntity, Long> {
+    long countByStatus(com.markethub.seller.domain.SellerStatus status);
     @EntityGraph(attributePaths = "user")
     Page<SellerEntity> findAllByStatus(com.markethub.seller.domain.SellerStatus status, Pageable pageable);
     @EntityGraph(attributePaths = "user")

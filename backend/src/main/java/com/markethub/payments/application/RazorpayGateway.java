@@ -18,5 +18,16 @@ public class RazorpayGateway {
             Object id=result==null?null:result.get("id"); if(!(id instanceof String value)||value.isBlank()) throw new IllegalStateException("Razorpay did not return an order id"); return value;
         } catch(ResponseStatusException e){throw e;} catch(Exception e){throw new ResponseStatusException(HttpStatus.BAD_GATEWAY,"Payment provider could not create an order",e);}
     }
+    public RefundResult refund(String paymentId,String reason) {
+        if(keyId.isBlank()||keySecret.isBlank()) throw new ResponseStatusException(HttpStatus.SERVICE_UNAVAILABLE,"Online refunds are not configured");
+        try {
+            Map<?,?> result=RestClient.create(baseUrl).post().uri("/payments/{id}/refund",paymentId).headers(h->h.setBasicAuth(keyId,keySecret))
+                    .body(Map.of("notes",Map.of("reason",reason))).retrieve().body(Map.class);
+            if(result==null||!(result.get("id") instanceof String id)) throw new IllegalStateException("Razorpay did not return a refund id");
+            Object status=result.containsKey("status")?result.get("status"):"pending";
+            return new RefundResult(id,String.valueOf(status));
+        } catch(ResponseStatusException e){throw e;} catch(Exception e){throw new ResponseStatusException(HttpStatus.BAD_GATEWAY,"Payment provider could not create a refund",e);}
+    }
+    public record RefundResult(String id,String status) { }
     public String keyId(){return keyId;} public String keySecret(){return keySecret;} public String webhookSecret(){return webhookSecret;}
 }

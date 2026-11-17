@@ -54,17 +54,20 @@ public class CheckoutService {
     private final UserRepository users;
     private final java.time.Clock clock;
     private final PaymentService payments;
+    private final java.math.BigDecimal commissionRate;
 
     public CheckoutService(CheckoutPricingService pricing, CheckoutQuoteRepository quotes, CouponRepository coupons,
             CouponRedemptionRepository redemptions, ProductRepository products, InventoryRepository inventory,
             CartRepository carts, CartItemRepository cartItems, OrderRepository orders, SellerOrderRepository sellerOrders,
             OrderItemRepository orderItems, InventoryReservationRepository reservations,
             OrderStatusHistoryRepository orderHistory, SellerOrderStatusHistoryRepository sellerOrderHistory,
-            UserRepository users, java.time.Clock clock, PaymentService payments) {
+            UserRepository users, java.time.Clock clock, PaymentService payments,
+            @org.springframework.beans.factory.annotation.Value("${markethub.seller.commission-rate:0.10}") java.math.BigDecimal commissionRate) {
         this.pricing = pricing; this.quotes = quotes; this.coupons = coupons; this.redemptions = redemptions;
         this.products = products; this.inventory = inventory; this.carts = carts; this.cartItems = cartItems;
         this.orders = orders; this.sellerOrders = sellerOrders; this.orderItems = orderItems; this.reservations = reservations;
-        this.orderHistory = orderHistory; this.sellerOrderHistory = sellerOrderHistory; this.users = users; this.clock = clock; this.payments = payments;
+        this.orderHistory = orderHistory; this.sellerOrderHistory = sellerOrderHistory; this.users = users; this.clock = clock; this.payments = payments; this.commissionRate = commissionRate;
+        if (commissionRate.signum() < 0 || commissionRate.compareTo(java.math.BigDecimal.ONE) > 0) throw new IllegalArgumentException("Seller commission rate must be from 0 to 1");
     }
 
     @Transactional
@@ -139,8 +142,9 @@ public class CheckoutService {
             var first = group.getFirst().product();
             String sellerStatus = "COD".equals(paymentMethod) ? "CONFIRMED" : "PENDING_PAYMENT";
             var sellerSubtotal = group.stream().map(CheckoutPricingService.CheckoutLine::lineTotal).reduce(java.math.BigDecimal.ZERO, java.math.BigDecimal::add);
+            var commission = sellerSubtotal.multiply(commissionRate).setScale(4, java.math.RoundingMode.HALF_UP);
             SellerOrderEntity sellerOrder = sellerOrders.saveAndFlush(new SellerOrderEntity(order, first.getStore().getSeller(),
-                    first.getStore().getName(), sellerStatus, sellerSubtotal));
+                    first.getStore().getName(), sellerStatus, sellerSubtotal, commission));
             sellerOrderHistory.save(new SellerOrderStatusHistoryEntity(sellerOrder, calculation.customer(), null, sellerStatus, "Checkout order placed"));
             for (var line : group) {
                 OrderItemEntity item = orderItems.saveAndFlush(new OrderItemEntity(sellerOrder, line.product(), line.quantity(), line.unitPrice(), line.lineTotal()));

@@ -67,7 +67,7 @@ The `/compare` screen loads two to four product details using the same detail en
 
 ## Cart and checkout frontend API contract
 
-Cart and wishlist endpoints are implemented in backend Phase 8. Checkout quotes and customer orders are implemented in Phase 9. Razorpay Checkout sessions, payment verification, webhooks, and seller fulfillment are implemented in Phase 10; refunds remain future work.
+Cart and wishlist endpoints are implemented in backend Phase 8. Checkout quotes and customer orders are implemented in Phase 9. Razorpay Checkout, payment verification, webhooks, and seller fulfillment are implemented in Phase 10. Full online refunds, admin customer/order queues, and seller/platform reports are implemented in Phase 11; partial and COD refunds remain future work.
 
 - `GET /api/v1/cart` returns `{ items: [{ id, productId, name, quantity, availableQuantity, unitPrice, lineTotal, currency, imageUrl, imageAlt, sellerName }], subtotal, currency }`.
 - `PUT /api/v1/cart/items/{id}` accepts `{ quantity }`; `DELETE /api/v1/cart/items/{id}` removes the line. Both mutations return the updated cart representation.
@@ -110,4 +110,4 @@ Seller application listing and approval/rejection endpoints are implemented in b
 - `GET /api/v1/admin/coupons` lists rules; create/update accepts code, discount type/value, minimum, usage limit, start/end dates, and active state.
 - `GET /api/v1/admin/reports?from=&to=` returns `{ grossSales, orderCount, commissionTotal, refundTotal, daily }`.
 
-Remaining dashboard, customer administration, order/refund, and reports endpoints are future contracts. Coupon/category/product management endpoints are implemented. Admin mutations require server-side authorization and audit records; client route guards only control navigation.
+Remaining advanced admin controls are future contracts. Dashboard, customer/order queues, full online refunds, reports, coupons, category, and product management endpoints are implemented. Admin mutations require server-side authorization and audit records; client route guards only control navigation.

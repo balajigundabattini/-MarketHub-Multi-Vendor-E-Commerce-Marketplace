@@ -10,4 +10,11 @@ public interface OrderRepository extends JpaRepository<OrderEntity, Long> {
     Page<OrderEntity> findAllByCustomerId(Long customerId, Pageable pageable);
     @EntityGraph(attributePaths = {"sellerOrders", "sellerOrders.seller", "sellerOrders.items", "sellerOrders.items.product", "sellerOrders.items.product.store"})
     Optional<OrderEntity> findByIdAndCustomerId(Long id, Long customerId);
+    @EntityGraph(attributePaths = {"customer"})
+    @org.springframework.data.jpa.repository.Query("select o from OrderEntity o where (:status is null or o.status = :status)")
+    Page<OrderEntity> findAdminPage(@org.springframework.data.repository.query.Param("status") String status, Pageable pageable);
+    @org.springframework.data.jpa.repository.Lock(jakarta.persistence.LockModeType.PESSIMISTIC_WRITE)
+    @org.springframework.data.jpa.repository.Query("select o from OrderEntity o where o.id=:id")
+    Optional<OrderEntity> findByIdForUpdate(@org.springframework.data.repository.query.Param("id") Long id);
+    java.util.List<OrderEntity> findAllByCreatedAtGreaterThanEqualAndCreatedAtLessThan(java.time.Instant from,java.time.Instant to);
 }

@@ -5,7 +5,7 @@
 - RAZORPAY checkout creates a provider order and a customer-owned payment resource. The frontend opens Razorpay Checkout with the server-issued key and provider order ID.
 - Customer callback signatures are verified on the server using the provider order ID stored in the database. A raw-body webhook endpoint validates `X-Razorpay-Signature`; captured and failed payment events update payment state. Captured payment commits the reserved inventory and confirms the parent and seller orders.
 - Failed payments can be retried through an authenticated endpoint. Order/payment details are only available to the owning customer.
-- Seller order listing, accept/reject, processing, and shipment creation are scoped to the approved seller. Status changes are audited. COD stock is committed at shipment; rejected unpaid orders release their reservations. Paid orders cannot be rejected until a refund flow exists.
+- Seller order listing, accept/reject, processing, and shipment creation are scoped to the approved seller. Status changes are audited. COD stock is committed at shipment; rejected unpaid orders release their reservations. Paid orders must be refunded through the admin workflow before financial cancellation.
 - Migration `V5__payments_and_fulfillment.sql` creates payment and shipment tables.
 
 ## Configuration

@@ -22,5 +22,8 @@ public class PaymentEntity {
     public void capture(String paymentId) { this.providerPaymentId=paymentId; this.status="CAPTURED"; }
     public void fail(String paymentId) { if ("CAPTURED".equals(status)) return; this.providerPaymentId=paymentId; this.status="FAILED"; }
     public void expire() { if ("PENDING".equals(status) || "FAILED".equals(status)) this.status="EXPIRED"; }
+    public void refundPending() { if ("CAPTURED".equals(status)) this.status="REFUND_PENDING"; }
+    public void refunded() { this.status="REFUNDED"; }
+    public void refundFailed() { if ("REFUND_PENDING".equals(status)) this.status="CAPTURED"; }
     public Long getId(){return id;} public OrderEntity getOrder(){return order;} public String getProvider(){return provider;} public String getProviderOrderId(){return providerOrderId;} public String getProviderPaymentId(){return providerPaymentId;} public String getStatus(){return status;} public int getAttemptCount(){return attemptCount;} public BigDecimal getAmount(){return amount;} public String getCurrency(){return currency;}
 }
