@@ -1,6 +1,6 @@
 # MarketHub backend
 
-Java 21 and Spring Boot API for the MarketHub modular monolith. Implemented endpoints include health, identity, customer profile/address, seller onboarding/store management, public catalog discovery, seller product/inventory management, and admin category/product moderation.
+Java 21 and Spring Boot API for the MarketHub modular monolith. Implemented endpoints include health, identity, customer profile/address, seller onboarding/store management, public catalog discovery, seller product/inventory management, admin category/product moderation, cart, and wishlist.
 
 ## Prerequisites
 
@@ -47,7 +47,9 @@ Seller onboarding is available at `GET|POST /api/v1/seller-applications` (includ
 
 Public catalog routes are `GET /api/v1/catalog/categories`, `GET /api/v1/catalog/products`, and `GET /api/v1/catalog/products/{id}`. Seller-owned product and inventory routes use `/api/v1/seller/products` and `/api/v1/seller/inventory`. New or edited products require admin moderation before they appear in public discovery. Admin category and product moderation routes use `/api/v1/admin/categories` and `/api/v1/admin/products`. Every seller/admin endpoint is role guarded, and seller product/stock operations resolve ownership from the authenticated principal.
 
-Cart/checkout, orders, payments, seller fulfillment/reports, and most admin operations are not implemented yet. See [Phase 6 seller management](../docs/phase-6-seller-management.md) and [Phase 7 catalog and products](../docs/phase-7-catalog-and-products.md) for the implemented workflows and their boundaries.
+The authenticated customer cart and wishlist routes use `/api/v1/cart` and `/api/v1/wishlist`. Cart prices are read from current product data; the cart does not reserve stock and is not an authoritative checkout quote. Cart and wishlist operations are scoped to the authenticated customer's IDs.
+
+Checkout, orders, payments, seller fulfillment/reports, and most admin operations are not implemented yet. See [Phase 6 seller management](../docs/phase-6-seller-management.md), [Phase 7 catalog and products](../docs/phase-7-catalog-and-products.md), and [Phase 8 cart and wishlist](../docs/phase-8-cart-and-wishlist.md) for the implemented workflows and their boundaries.
 
 ## Run tests
 

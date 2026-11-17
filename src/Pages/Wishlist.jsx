@@ -58,10 +58,10 @@ const Wishlist = () => {
             <div className="card h-100">
               <Link to={`/products/${item.productId}`} className="text-decoration-none text-reset">
                 {item.imageUrl && <img src={item.imageUrl} className="card-img-top" alt={item.imageAlt || item.name} style={{ height: 220, objectFit: 'cover' }} />}
-                <div className="card-body"><h2 className="h6">{item.name}</h2><p className="fw-semibold mb-0">{new Intl.NumberFormat(undefined, { style: 'currency', currency: item.currency || 'INR' }).format(item.price)}</p></div>
+                <div className="card-body"><h2 className="h6">{item.name}</h2><p className="fw-semibold mb-1">{new Intl.NumberFormat(undefined, { style: 'currency', currency: item.currency || 'INR' }).format(item.price)}</p>{!item.available && <span className="small text-secondary">Currently unavailable</span>}</div>
               </Link>
               <div className="card-footer bg-white d-flex gap-2">
-                <button className="btn btn-sm btn-primary" type="button" disabled={busyId === item.productId} onClick={() => moveToCart(item)}>Add to cart</button>
+                <button className="btn btn-sm btn-primary" type="button" disabled={busyId === item.productId || !item.available} onClick={() => moveToCart(item)}>Add to cart</button>
                 <button className="btn btn-sm btn-outline-danger" type="button" disabled={busyId === item.productId} onClick={() => remove(item)}>Remove</button>
               </div>
             </div>

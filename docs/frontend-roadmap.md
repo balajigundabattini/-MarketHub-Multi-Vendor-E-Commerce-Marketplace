@@ -52,7 +52,7 @@ This tracks the React screens requested in the MarketHub project brief. Screens 
 
 ## Dependency order
 
-The backend currently implements identity, customer profile/address, seller onboarding/store management, catalog discovery, seller product/inventory management, and category/product moderation. Cart/checkout, payment, seller orders/reports, and other admin services are still outstanding. Provider checkout needs a server-issued provider session. Product images currently use URL inputs; secure upload needs a backend storage contract.
+The backend currently implements identity, customer profile/address, seller onboarding/store management, catalog discovery, seller product/inventory management, category/product moderation, and cart/wishlist APIs. Checkout, payment, seller orders/reports, and other admin services are still outstanding. Provider checkout needs a server-issued provider session. Product images currently use URL inputs; secure upload needs a backend storage contract.
 
 ## Catalog frontend API contract
 
@@ -66,6 +66,8 @@ The catalog pages call these public endpoints, implemented in backend Phase 7:
 The `/compare` screen loads two to four product details using the same detail endpoint. The screens show API loading, empty, and failure states and do not fabricate catalog items.
 
 ## Cart and checkout frontend API contract
+
+Cart and wishlist endpoints in this contract are implemented in backend Phase 8; checkout remains future backend work.
 
 - `GET /api/v1/cart` returns `{ items: [{ id, productId, name, quantity, availableQuantity, unitPrice, lineTotal, currency, imageUrl, imageAlt, sellerName }], subtotal, currency }`.
 - `PUT /api/v1/cart/items/{id}` accepts `{ quantity }`; `DELETE /api/v1/cart/items/{id}` removes the line. Both mutations return the updated cart representation.

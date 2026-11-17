@@ -66,12 +66,14 @@ const Cart = () => {
                   {item.imageUrl && <img src={item.imageUrl} alt={item.imageAlt || item.name} width="96" height="96" className="rounded" style={{ objectFit: 'cover' }} />}
                   <div className="flex-grow-1"><Link to={`/products/${item.productId}`} className="fw-semibold">{item.name}</Link>
                     {item.sellerName && <p className="small text-secondary mb-1">Sold by {item.sellerName}</p>}
+                    {item.availableQuantity <= 0 && <p className="small text-danger mb-1">Currently unavailable</p>}
+                    {item.availableQuantity > 0 && item.quantity > item.availableQuantity && <p className="small text-warning mb-1">Only {item.availableQuantity} available. Update quantity before checkout.</p>}
                     <p className="mb-0">{money(item.unitPrice, item.currency)} each</p>
                   </div>
                   <div className="d-flex align-items-center gap-2" role="group" aria-label={`Quantity for ${item.name}`}>
                     <button className="btn btn-sm btn-outline-secondary" type="button" aria-label={`Decrease ${item.name} quantity`} disabled={busyItem === item.id || item.quantity <= 1} onClick={() => changeQuantity(item, item.quantity - 1)}>−</button>
                     <span aria-live="polite" className="px-2">{item.quantity}</span>
-                    <button className="btn btn-sm btn-outline-secondary" type="button" aria-label={`Increase ${item.name} quantity`} disabled={busyItem === item.id || (item.availableQuantity && item.quantity >= item.availableQuantity)} onClick={() => changeQuantity(item, item.quantity + 1)}>+</button>
+                    <button className="btn btn-sm btn-outline-secondary" type="button" aria-label={`Increase ${item.name} quantity`} disabled={busyItem === item.id || item.quantity >= item.availableQuantity} onClick={() => changeQuantity(item, item.quantity + 1)}>+</button>
                     <button className="btn btn-outline-danger" type="button" disabled={busyItem === item.id} onClick={() => removeItem(item)}>Remove</button>
                   </div>
                   <strong className="ms-auto">{money(item.lineTotal, item.currency)}</strong>

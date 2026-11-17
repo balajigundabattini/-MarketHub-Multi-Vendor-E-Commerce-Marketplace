@@ -21,6 +21,10 @@ public interface ProductRepository extends JpaRepository<ProductEntity, Long>, J
     Optional<ProductEntity> findByIdAndStatusAndStore_StatusAndStore_Seller_Status(
             Long id, ProductStatus status, String storeStatus, com.markethub.seller.domain.SellerStatus sellerStatus);
 
+    @EntityGraph(attributePaths = {"category", "store", "store.seller", "images"})
+    Optional<ProductEntity> findByIdAndStatusAndStore_StatusAndStore_Seller_StatusAndCategory_Active(
+            Long id, ProductStatus status, String storeStatus, com.markethub.seller.domain.SellerStatus sellerStatus, boolean categoryActive);
+
     boolean existsByStoreIdAndSkuIgnoreCase(Long storeId, String sku);
     boolean existsByStoreIdAndSkuIgnoreCaseAndIdNot(Long storeId, String sku, Long id);
 
