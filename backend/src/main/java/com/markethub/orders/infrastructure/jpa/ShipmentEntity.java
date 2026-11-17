@@ -20,4 +20,5 @@ public class ShipmentEntity {
     public String getTrackingNumber() { return trackingNumber; }
     public String getStatus() { return status; }
     public Instant getShippedAt() { return shippedAt; }
+    public void markDelivered() { this.status = "DELIVERED"; this.deliveredAt = Instant.now(); }
 }

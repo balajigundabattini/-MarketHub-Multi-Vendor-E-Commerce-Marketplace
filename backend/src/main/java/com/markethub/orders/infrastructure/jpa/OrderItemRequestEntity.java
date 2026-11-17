@@ -19,6 +19,13 @@ public class OrderItemRequestEntity {
     @Column(name = "updated_at", nullable = false) private Instant updatedAt;
     protected OrderItemRequestEntity() { }
     public OrderItemRequestEntity(OrderItemEntity orderItem, UserEntity customer, String requestType, String reason) { this.orderItem = orderItem; this.customer = customer; this.requestType = requestType; this.reason = reason; }
+    public void review(UserEntity reviewer, String status, String note) { this.reviewer = reviewer; this.status = status; this.reviewNote = note; }
+    public Long getId() { return id; }
+    public OrderItemEntity getOrderItem() { return orderItem; }
+    public String getRequestType() { return requestType; }
+    public String getStatus() { return status; }
+    public String getReason() { return reason; }
+    public Instant getCreatedAt() { return createdAt; }
     @PrePersist void beforeInsert() { Instant now = Instant.now(); createdAt = now; updatedAt = now; }
     @PreUpdate void beforeUpdate() { updatedAt = Instant.now(); }
 }
