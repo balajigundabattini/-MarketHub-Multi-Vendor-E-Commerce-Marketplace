@@ -29,6 +29,7 @@ import com.markethub.orders.infrastructure.jpa.SellerOrderEntity;
 import com.markethub.orders.infrastructure.jpa.SellerOrderRepository;
 import com.markethub.orders.infrastructure.jpa.SellerOrderStatusHistoryEntity;
 import com.markethub.orders.infrastructure.jpa.SellerOrderStatusHistoryRepository;
+import com.markethub.payments.application.PaymentService;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -52,17 +53,18 @@ public class CheckoutService {
     private final SellerOrderStatusHistoryRepository sellerOrderHistory;
     private final UserRepository users;
     private final java.time.Clock clock;
+    private final PaymentService payments;
 
     public CheckoutService(CheckoutPricingService pricing, CheckoutQuoteRepository quotes, CouponRepository coupons,
             CouponRedemptionRepository redemptions, ProductRepository products, InventoryRepository inventory,
             CartRepository carts, CartItemRepository cartItems, OrderRepository orders, SellerOrderRepository sellerOrders,
             OrderItemRepository orderItems, InventoryReservationRepository reservations,
             OrderStatusHistoryRepository orderHistory, SellerOrderStatusHistoryRepository sellerOrderHistory,
-            UserRepository users, java.time.Clock clock) {
+            UserRepository users, java.time.Clock clock, PaymentService payments) {
         this.pricing = pricing; this.quotes = quotes; this.coupons = coupons; this.redemptions = redemptions;
         this.products = products; this.inventory = inventory; this.carts = carts; this.cartItems = cartItems;
         this.orders = orders; this.sellerOrders = sellerOrders; this.orderItems = orderItems; this.reservations = reservations;
-        this.orderHistory = orderHistory; this.sellerOrderHistory = sellerOrderHistory; this.users = users; this.clock = clock;
+        this.orderHistory = orderHistory; this.sellerOrderHistory = sellerOrderHistory; this.users = users; this.clock = clock; this.payments = payments;
     }
 
     @Transactional
@@ -153,7 +155,8 @@ public class CheckoutService {
         }
         cartItems.clearForCart(cart.getId());
         quote.consume(clock.instant());
-        return new PlacedOrderResponse(order.getId(), order.getPublicOrderNumber(), null);
+        Long paymentId = "COD".equals(paymentMethod) ? null : payments.createForOrder(order).paymentId();
+        return new PlacedOrderResponse(order.getId(), order.getPublicOrderNumber(), paymentId);
     }
 
     private String orderNumber() { return "MH-" + java.time.format.DateTimeFormatter.ofPattern("yyyyMMdd").withZone(java.time.ZoneOffset.UTC).format(clock.instant()) + "-" + UUID.randomUUID().toString().substring(0, 8).toUpperCase(java.util.Locale.ROOT); }

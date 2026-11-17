@@ -32,16 +32,19 @@ public class SellerOrderEntity {
     @Column(name = "created_at", nullable = false, updatable = false) private Instant createdAt;
     @Column(name = "updated_at", nullable = false) private Instant updatedAt;
     @OneToMany(mappedBy = "sellerOrder") private List<OrderItemEntity> items = new ArrayList<>();
+    @OneToMany(mappedBy = "sellerOrder") private List<ShipmentEntity> shipments = new ArrayList<>();
     protected SellerOrderEntity() { }
     public SellerOrderEntity(OrderEntity order, SellerEntity seller, String storeName, String status, BigDecimal subtotal) { this.order = order; this.seller = seller; this.storeNameSnapshot = storeName; this.status = status; this.subtotal = subtotal; }
     public void setStatus(String status) { this.status = status; }
     @PrePersist void beforeInsert() { Instant now = Instant.now(); createdAt = now; updatedAt = now; }
     @PreUpdate void beforeUpdate() { updatedAt = Instant.now(); }
     public Long getId() { return id; }
+    public Instant getCreatedAt() { return createdAt; }
     public OrderEntity getOrder() { return order; }
     public SellerEntity getSeller() { return seller; }
     public String getStoreNameSnapshot() { return storeNameSnapshot; }
     public String getStatus() { return status; }
     public BigDecimal getSubtotal() { return subtotal; }
     public List<OrderItemEntity> getItems() { return items; }
+    public List<ShipmentEntity> getShipments() { return shipments; }
 }

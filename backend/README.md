@@ -49,7 +49,7 @@ Public catalog routes are `GET /api/v1/catalog/categories`, `GET /api/v1/catalog
 
 The authenticated customer cart and wishlist routes use `/api/v1/cart` and `/api/v1/wishlist`. Cart prices are read from current product data; the cart does not reserve stock and is not an authoritative checkout quote. Cart and wishlist operations are scoped to the authenticated customer's IDs.
 
-Checkout quotes/order placement, customer order history and requests, and admin coupon management are implemented. Payment provider integration, seller fulfillment/reports, and remaining admin operations are pending. See [Phase 6 seller management](../docs/phase-6-seller-management.md), [Phase 7 catalog and products](../docs/phase-7-catalog-and-products.md), [Phase 8 cart and wishlist](../docs/phase-8-cart-and-wishlist.md), and [Phase 9 checkout and orders](../docs/phase-9-checkout-and-orders.md) for workflow details and boundaries.
+Checkout quotes/order placement, customer order history, admin coupon management, Razorpay payment attempts/verification, and seller order fulfillment are implemented. Seller reports, refund workflows, and remaining admin operations are pending. Payment integration requires `RAZORPAY_KEY_ID`, `RAZORPAY_KEY_SECRET`, and `RAZORPAY_WEBHOOK_SECRET`. See [Phase 6 seller management](../docs/phase-6-seller-management.md), [Phase 7 catalog and products](../docs/phase-7-catalog-and-products.md), [Phase 8 cart and wishlist](../docs/phase-8-cart-and-wishlist.md), [Phase 9 checkout and orders](../docs/phase-9-checkout-and-orders.md), and [Phase 10 payments and fulfillment](../docs/phase-10-payments-and-fulfillment.md) for workflow details and boundaries.
 
 ## Run tests
 

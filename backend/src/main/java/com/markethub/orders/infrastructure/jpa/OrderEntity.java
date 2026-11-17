@@ -58,6 +58,8 @@ public class OrderEntity {
         this.shippingRegion = address.getRegion(); this.shippingPostalCode = address.getPostalCode(); this.shippingCountryCode = address.getCountryCode();
     }
     public void setStatus(String status) { this.status = status; }
+    public void markPaid() { this.paymentStatus = "PAID"; this.status = "CONFIRMED"; }
+    public void markPaidNeedsReview() { this.paymentStatus = "PAID"; this.status = "PAYMENT_REVIEW_REQUIRED"; }
     @PrePersist void beforeInsert() { Instant now = Instant.now(); createdAt = now; updatedAt = now; }
     @PreUpdate void beforeUpdate() { updatedAt = Instant.now(); }
     public Long getId() { return id; }

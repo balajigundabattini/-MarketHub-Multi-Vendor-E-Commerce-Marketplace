@@ -4,19 +4,19 @@ MarketHub is a portfolio project for a multi-vendor marketplace. Customers will 
 
 Project repository: [balajigundabattini/-MarketHub-Multi-Vendor-E-Commerce-Marketplace](https://github.com/balajigundabattini/-MarketHub-Multi-Vendor-E-Commerce-Marketplace)
 
-The project is being built in phases as a modular monolith: a React frontend, a Java 21 / Spring Boot REST backend, and MySQL. Customer identity/profile/address, seller onboarding, catalog discovery, seller product/inventory, category/product moderation, cart, wishlist, checkout quotes, coupon administration, and customer order workflows are implemented. Payment provider integration and seller fulfillment remain upcoming.
+The project is being built in phases as a modular monolith: a React frontend, a Java 21 / Spring Boot REST backend, and MySQL. Customer identity/profile/address, seller onboarding, catalog discovery, seller product/inventory, category/product moderation, cart, wishlist, checkout quotes, coupon administration, customer orders, Razorpay payment verification, and seller fulfillment are implemented. Refunds, seller reports, and remaining admin workflows are still in progress.
 
 ## Current status
 
 - Project identity and initial requirements/scope are established.
 - Frontend scaffold: React, Vite, JavaScript, React Router, Redux Toolkit, Axios, and Bootstrap.
 - Backend scaffold: Java 21, Spring Boot 4.1.2, Maven Wrapper, Actuator, and a health endpoint.
-- Flyway migrations define identity, customer, seller, catalog, shopping, checkout, coupon, and order tables; applying them and validating against a configured local database is still required.
+- Flyway migrations define identity, customer, seller, catalog, shopping, checkout, coupon, order, payment, and shipment tables; applying them and validating against a configured local database is still required.
 - Authentication API: customer registration with email verification, login, refresh rotation, logout, password recovery, JWT resource-server validation, and frontend session restoration.
 - Customer profile and address API: authenticated profile updates and owner-scoped delivery address management with default selection and soft deletion.
 - Seller application review, store profiles, seller product and inventory APIs, public catalog discovery, and admin category/product moderation.
 - Persistent customer cart and wishlist APIs with current price/stock checks.
-- Payments, seller fulfillment/reports, and remaining admin operations: not yet implemented.
+- Refunds, seller reports, and remaining admin operations: not yet implemented.
 
 See [Phase 1 requirements and scope](docs/phase-1-requirements-and-scope.md) for roles, business rules, MVP boundaries, and implementation dependencies.
 
@@ -25,6 +25,7 @@ Customer profile and address behavior is documented in [Phase 5 customer profile
 See the [frontend delivery roadmap](docs/frontend-roadmap.md) for the requested customer, seller, and admin screens and their backend dependencies.
 Seller onboarding and role grants are documented in [Phase 6](docs/phase-6-seller-management.md). Catalog, seller product/inventory, and moderation APIs are documented in [Phase 7](docs/phase-7-catalog-and-products.md).
 Cart and wishlist behavior is documented in [Phase 8](docs/phase-8-cart-and-wishlist.md).
+Checkout and customer orders are documented in [Phase 9](docs/phase-9-checkout-and-orders.md); provider payments and seller fulfillment are documented in [Phase 10](docs/phase-10-payments-and-fulfillment.md).
 
 Architecture and data model decisions are tracked in [Phase 2 architecture](docs/phase-2-architecture.md) and [Phase 3 database design](docs/phase-3-database-design.md).
 

@@ -17,6 +17,7 @@ import com.markethub.orders.infrastructure.jpa.OrderStatusHistoryRepository;
 import com.markethub.orders.infrastructure.jpa.SellerOrderEntity;
 import com.markethub.orders.infrastructure.jpa.SellerOrderStatusHistoryEntity;
 import com.markethub.orders.infrastructure.jpa.SellerOrderStatusHistoryRepository;
+import com.markethub.payments.infrastructure.jpa.PaymentRepository;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
@@ -33,12 +34,13 @@ public class OrderService {
     private final OrderStatusHistoryRepository orderHistory;
     private final SellerOrderStatusHistoryRepository sellerOrderHistory;
     private final UserRepository users;
+    private final PaymentRepository payments;
 
     public OrderService(OrderRepository orders, OrderItemRepository items, OrderItemRequestRepository requests,
             OrderStatusHistoryRepository orderHistory, SellerOrderStatusHistoryRepository sellerOrderHistory,
-            UserRepository users) {
+            UserRepository users, PaymentRepository payments) {
         this.orders = orders; this.items = items; this.requests = requests;
-        this.orderHistory = orderHistory; this.sellerOrderHistory = sellerOrderHistory; this.users = users;
+        this.orderHistory = orderHistory; this.sellerOrderHistory = sellerOrderHistory; this.users = users; this.payments = payments;
     }
 
     @Transactional(readOnly = true)
@@ -61,6 +63,7 @@ public class OrderService {
         if (!List.of("PENDING_PAYMENT", "CONFIRMED").contains(order.getStatus())) {
             throw new ResponseStatusException(HttpStatus.CONFLICT, "This order can no longer be cancelled");
         }
+        if ("PAID".equals(order.getPaymentStatus())) throw new ResponseStatusException(HttpStatus.CONFLICT, "Paid order cancellation requires a refund workflow");
         OrderItemEntity item = ownedItem(userId, orderId, itemId);
         if (!"ACTIVE".equals(item.getStatus())) throw new ResponseStatusException(HttpStatus.CONFLICT, "This item cannot be cancelled");
         if (requests.existsByOrderItemIdAndRequestTypeAndStatus(itemId, "CANCELLATION", "REQUESTED")) {
@@ -114,10 +117,13 @@ public class OrderService {
                 return new OrderDetailsResponse.Item(item.getId(), item.getProduct().getId(), item.getNameSnapshot(),
                         item.getSkuSnapshot(), item.getQuantity(), item.getUnitPrice(), item.getStatus(), cancellable, returnable, false);
             }).toList();
-            return new OrderDetailsResponse.SellerOrder(sellerOrder.getId(), sellerOrder.getStoreNameSnapshot(), sellerOrder.getStatus(), List.of(), orderItems);
+            var shipmentRows = sellerOrder.getShipments().stream().map(shipment -> new OrderDetailsResponse.Shipment(
+                    shipment.getId(), shipment.getStatus(), shipment.getCarrier(), shipment.getTrackingNumber())).toList();
+            return new OrderDetailsResponse.SellerOrder(sellerOrder.getId(), sellerOrder.getStoreNameSnapshot(), sellerOrder.getStatus(), shipmentRows, orderItems);
         }).toList();
+        Long paymentId = payments.findByOrderId(order.getId()).map(com.markethub.payments.infrastructure.jpa.PaymentEntity::getId).orElse(null);
         return new OrderDetailsResponse(order.getId(), order.getPublicOrderNumber(), order.getCreatedAt(), order.getStatus(),
-                order.getPaymentStatus(), null, order.getSubtotal(), order.getShipping(), order.getTax(), order.getDiscount(),
+                order.getPaymentStatus(), paymentId, order.getSubtotal(), order.getShipping(), order.getTax(), order.getDiscount(),
                 order.getTotal(), order.getCurrency(), address, sellerOrderResponses);
     }
 }

@@ -111,11 +111,12 @@ public class SecurityConfiguration {
                                 "/api/v1/auth/refresh", "/api/v1/auth/logout",
                                 "/api/v1/auth/verify-email", "/api/v1/auth/forgot-password",
                                 "/api/v1/auth/reset-password", "/api/v1/auth/resend-verification").permitAll()
+                        .requestMatchers(HttpMethod.POST, "/api/v1/payments/webhook").permitAll()
                         .requestMatchers(HttpMethod.GET, "/api/v1/catalog/**").permitAll()
                         .requestMatchers("/api/v1/admin/**").hasRole("ADMIN")
                         .requestMatchers("/api/v1/seller/**").hasRole("SELLER")
                         .requestMatchers("/api/v1/seller-applications/**").hasRole("CUSTOMER")
-                        .requestMatchers("/api/v1/cart/**", "/api/v1/wishlist/**", "/api/v1/checkout/**", "/api/v1/orders/**").hasRole("CUSTOMER")
+                        .requestMatchers("/api/v1/cart/**", "/api/v1/wishlist/**", "/api/v1/checkout/**", "/api/v1/orders/**", "/api/v1/payments/**").hasRole("CUSTOMER")
                         .requestMatchers("/api/v1/customer/**").hasRole("CUSTOMER")
                         .anyRequest().authenticated())
                 .oauth2ResourceServer(oauth -> oauth.jwt(jwt ->

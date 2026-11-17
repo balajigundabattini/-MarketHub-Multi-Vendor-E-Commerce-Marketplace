@@ -67,7 +67,7 @@ The `/compare` screen loads two to four product details using the same detail en
 
 ## Cart and checkout frontend API contract
 
-Cart and wishlist endpoints are implemented in backend Phase 8. Checkout quotes and customer orders are implemented in backend Phase 9; payment-provider sessions remain future backend work.
+Cart and wishlist endpoints are implemented in backend Phase 8. Checkout quotes and customer orders are implemented in Phase 9. Razorpay Checkout sessions, payment verification, webhooks, and seller fulfillment are implemented in Phase 10; refunds remain future work.
 
 - `GET /api/v1/cart` returns `{ items: [{ id, productId, name, quantity, availableQuantity, unitPrice, lineTotal, currency, imageUrl, imageAlt, sellerName }], subtotal, currency }`.
 - `PUT /api/v1/cart/items/{id}` accepts `{ quantity }`; `DELETE /api/v1/cart/items/{id}` removes the line. Both mutations return the updated cart representation.
@@ -83,11 +83,11 @@ Cart and wishlist endpoints are implemented in backend Phase 8. Checkout quotes 
 - `POST /api/v1/orders/{id}/items/{itemId}/cancel` and `/returns` accept `{ reason }`; the server validates eligibility and ownership.
 - `POST /api/v1/products/{productId}/reviews` accepts `{ orderItemId, rating, title, body }`; the server confirms purchase eligibility and moderates the review.
 - `GET /api/v1/notifications?page=&size=` returns `{ content: [{ id, title, message, createdAt, read, orderId, paymentId }] }`; mark one or all read with `PUT /api/v1/notifications/{id}/read` or `PUT /api/v1/notifications/read-all`.
-- `GET /api/v1/payments/{id}` returns `{ paymentId, orderId, status, amount, currency, canRetry }`; `POST /api/v1/payments/{id}/retry` creates a new provider attempt and returns its current state. Provider checkout UI must use the server-issued payment session and verify the callback server-side.
+- `GET /api/v1/payments/{id}` returns `{ paymentId, orderId, status, amount, currency, canRetry, keyId, providerOrderId }`; `POST /api/v1/payments/{id}/retry` creates a new provider attempt. The frontend verifies the callback through `POST /api/v1/payments/{id}/verify`; the webhook endpoint accepts signed raw provider events.
 
 ## Seller frontend API contract
 
-Application/store profile endpoints are implemented in backend Phase 6. Product and inventory endpoints are implemented in backend Phase 7. Seller orders and reporting remain future backend work.
+Application/store profile endpoints are implemented in backend Phase 6. Product and inventory endpoints are implemented in Phase 7. Seller orders and shipment creation are implemented in Phase 10; reporting remains future work.
 
 - `GET /api/v1/seller-applications/me` returns the current user's application or not-found; `POST /api/v1/seller-applications` accepts `{ legalName, businessName }` and returns application status.
 - `GET /api/v1/seller/dashboard` returns `{ grossSales, orderCount, pendingOrders, productCount, currency }`.
@@ -110,4 +110,4 @@ Seller application listing and approval/rejection endpoints are implemented in b
 - `GET /api/v1/admin/coupons` lists rules; create/update accepts code, discount type/value, minimum, usage limit, start/end dates, and active state.
 - `GET /api/v1/admin/reports?from=&to=` returns `{ grossSales, orderCount, commissionTotal, refundTotal, daily }`.
 
-These are frontend contracts, not claims that server endpoints exist. Admin mutations require server-side authorization and audit records; client route guards only control navigation.
+Remaining dashboard, customer administration, order/refund, and reports endpoints are future contracts. Coupon/category/product management endpoints are implemented. Admin mutations require server-side authorization and audit records; client route guards only control navigation.

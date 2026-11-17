@@ -48,6 +48,7 @@ const SellerOrders = () => {
             {order.canAccept && <button className="btn btn-sm btn-primary" type="button" disabled={busyId === order.id} onClick={() => setStatus(order, 'ACCEPTED')}>Accept order</button>}
             {order.canReject && <button className="btn btn-sm btn-outline-danger" type="button" disabled={busyId === order.id} onClick={() => setStatus(order, 'REJECTED')}>Reject order</button>}
             {order.canStartProcessing && <button className="btn btn-sm btn-outline-primary" type="button" disabled={busyId === order.id} onClick={() => setStatus(order, 'PROCESSING')}>Start processing</button>}
+            {order.canApproveCancellation && <button className="btn btn-sm btn-outline-danger" type="button" disabled={busyId === order.id} onClick={() => setStatus(order, 'CANCELLED')}>Approve cancellation</button>}
           </div>
           {order.canShip && <div className="row g-2 mt-2 align-items-end">
             <div className="col-sm-4"><label className="form-label" htmlFor={`carrier-${order.id}`}>Carrier</label><input id={`carrier-${order.id}`} className="form-control" maxLength={100} value={shipmentForms[order.id]?.carrier || ''} onChange={(event) => setShipmentForms({ ...shipmentForms, [order.id]: { ...shipmentForms[order.id], carrier: event.target.value } })} /></div>
