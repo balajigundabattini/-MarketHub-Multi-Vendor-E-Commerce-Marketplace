@@ -71,7 +71,7 @@ public class SellerManagementService {
         if (request.status() != SellerStatus.APPROVED && request.status() != SellerStatus.REJECTED) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Seller applications can only be approved or rejected");
         }
-        SellerEntity seller = sellers.findByIdWithUser(sellerId)
+        SellerEntity seller = sellers.findByIdWithUserForUpdate(sellerId)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Seller application was not found"));
         if (seller.getStatus() != SellerStatus.PENDING_REVIEW) {
             throw new ResponseStatusException(HttpStatus.CONFLICT, "This application has already been reviewed");

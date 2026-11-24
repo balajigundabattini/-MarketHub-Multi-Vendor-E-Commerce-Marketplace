@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useState } from 'react'
-import { fetchSellerReports } from '../api/seller'
+import { fetchSellerReports, fetchSellerSettlements } from '../api/seller'
 
 const initialRange = () => {
   const end = new Date()
@@ -14,11 +14,12 @@ const SellerReports = () => {
   const [loading, setLoading] = useState(true)
   const [busy, setBusy] = useState(false)
   const [error, setError] = useState('')
+  const [settlements, setSettlements] = useState([])
 
   const load = useCallback(async (params) => {
     setBusy(true)
     setError('')
-    try { setReport(await fetchSellerReports(params)) }
+    try { const [nextReport, nextSettlements] = await Promise.all([fetchSellerReports(params), fetchSellerSettlements()]); setReport(nextReport); setSettlements(nextSettlements) }
     catch (requestError) { setError(requestError.response?.data?.detail || 'Reports could not be loaded.') }
     finally { setBusy(false); setLoading(false) }
   }, [])
@@ -39,6 +40,7 @@ const SellerReports = () => {
     {report && <>
       <div className="row g-3 mb-4">{[["Gross sales", report.grossSales], ["Commission", report.commission], ["Estimated seller earnings", report.netEarnings], ["Orders", report.orderCount]].map(([label, value]) => <div key={label} className="col-12 col-sm-6 col-xl-3"><section className="card card-body h-100"><span className="small text-secondary">{label}</span><strong className="fs-4">{label === 'Orders' ? value ?? '—' : amount(value)}</strong></section></div>)}</div>
       <section className="card card-body"><h2 className="h5">Daily sales</h2>{(report.dailySales || []).length === 0 ? <p className="text-secondary mb-0">No sales recorded for this period.</p> : <div className="table-responsive"><table className="table"><thead><tr><th>Date</th><th>Orders</th><th>Gross sales</th><th>Commission</th><th>Net earnings</th></tr></thead><tbody>{report.dailySales.map((day) => <tr key={day.date}><td>{day.date}</td><td>{day.orderCount}</td><td>{amount(day.grossSales)}</td><td>{amount(day.commission)}</td><td>{amount(day.netEarnings)}</td></tr>)}</tbody></table></div>}</section>
+      <section className="card card-body mt-4"><h2 className="h5">Settlement disbursements</h2>{settlements.length === 0 ? <p className="text-secondary mb-0">No settlements have been issued yet.</p> : <div className="table-responsive"><table className="table align-middle"><thead><tr><th>Period</th><th>Gross</th><th>Commission</th><th>Disbursed</th><th>Status</th><th>Reference</th></tr></thead><tbody>{settlements.map((row) => <tr key={row.id}><td>{row.periodFrom} – {row.periodTo}</td><td>{amount(row.grossAmount)}</td><td>{amount(row.commissionAmount)}</td><td>{amount(row.netAmount)}</td><td><span className={`badge ${row.status === 'PAID' ? 'text-bg-success' : 'text-bg-warning'}`}>{row.status}</span></td><td>{row.payoutReference || '—'}</td></tr>)}</tbody></table></div>}</section>
     </>}
   </main>
 }

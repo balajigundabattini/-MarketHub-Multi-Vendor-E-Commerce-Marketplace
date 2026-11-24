@@ -1,0 +1,12 @@
+package com.markethub.seller.infrastructure.jpa;
+import java.math.BigDecimal; import java.time.*; import jakarta.persistence.*;
+@Entity @Table(name="seller_settlements") public class SellerSettlementEntity{
+ @Id @GeneratedValue(strategy=GenerationType.IDENTITY) private Long id;
+ @ManyToOne(fetch=FetchType.LAZY,optional=false) @JoinColumn(name="seller_id",nullable=false) private SellerEntity seller;
+ @Column(name="period_from",nullable=false) private LocalDate periodFrom; @Column(name="period_to",nullable=false) private LocalDate periodTo;
+ @Column(name="gross_amount",nullable=false,precision=19,scale=4) private BigDecimal grossAmount; @Column(name="commission_amount",nullable=false,precision=19,scale=4) private BigDecimal commissionAmount; @Column(name="net_amount",nullable=false,precision=19,scale=4) private BigDecimal netAmount;
+ @Column(nullable=false,length=3) private String currency; @Column(nullable=false,length=20) private String status="PENDING"; @Column(name="payout_reference",length=120) private String payoutReference; @Column(name="paid_at") private Instant paidAt; @Column(name="created_at",nullable=false,updatable=false) private Instant createdAt;
+ protected SellerSettlementEntity(){} public SellerSettlementEntity(SellerEntity seller,LocalDate from,LocalDate to,BigDecimal gross,BigDecimal commission,BigDecimal net,String currency){this.seller=seller;periodFrom=from;periodTo=to;grossAmount=gross;commissionAmount=commission;netAmount=net;this.currency=currency;}
+ @PrePersist void beforeInsert(){createdAt=Instant.now();} public Long getId(){return id;} public LocalDate getPeriodFrom(){return periodFrom;} public LocalDate getPeriodTo(){return periodTo;} public BigDecimal getGrossAmount(){return grossAmount;} public BigDecimal getCommissionAmount(){return commissionAmount;} public BigDecimal getNetAmount(){return netAmount;} public String getCurrency(){return currency;} public String getStatus(){return status;} public String getPayoutReference(){return payoutReference;} public Instant getPaidAt(){return paidAt;} public Instant getCreatedAt(){return createdAt;} public Long getSellerId(){return seller.getId();} public String getBusinessName(){return seller.getBusinessName();} public Long getSellerUserId(){return seller.getUser().getId();}
+ public void markPaid(String reference){if(!"PENDING".equals(status))throw new IllegalStateException("Settlement is not pending");status="PAID";payoutReference=reference;paidAt=Instant.now();}
+}

@@ -3,6 +3,8 @@ package com.markethub.common;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ProblemDetail;
@@ -25,6 +27,7 @@ public class ApiExceptionHandler {
 
     @ExceptionHandler(DataIntegrityViolationException.class)
     ResponseEntity<ProblemDetail> conflict(DataIntegrityViolationException exception) {
+        logger.error("Database integrity violation during registration", exception);
         ProblemDetail problem = ProblemDetail.forStatusAndDetail(
                 HttpStatus.CONFLICT, "A record with the supplied unique value already exists");
         problem.setTitle("Conflicting record");
@@ -42,4 +45,7 @@ public class ApiExceptionHandler {
         problem.setProperty("fieldErrors", fieldErrors);
         return ResponseEntity.badRequest().body(problem);
     }
+
+    private static final Logger logger =
+    LoggerFactory.getLogger(ApiExceptionHandler.class);
 }

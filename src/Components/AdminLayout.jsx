@@ -2,8 +2,8 @@ import { NavLink, Outlet } from 'react-router-dom'
 
 const items = [
   ['/admin', 'Overview', true], ['/admin/customers', 'Customers'], ['/admin/sellers', 'Seller approvals'],
-  ['/admin/categories', 'Categories'], ['/admin/products', 'Product moderation'], ['/admin/orders', 'Orders & refunds'],
-  ['/admin/coupons', 'Coupons'], ['/admin/reports', 'Reports'],
+  ['/admin/categories', 'Categories'], ['/admin/products', 'Product moderation'], ['/admin/reviews', 'Review moderation'], ['/admin/orders', 'Orders & refunds'],
+  ['/admin/coupons', 'Coupons'], ['/admin/reports', 'Reports'], ['/admin/settlements', 'Settlements'],
 ]
 
 const AdminLayout = () => <div className="container-fluid py-4"><div className="row g-4">

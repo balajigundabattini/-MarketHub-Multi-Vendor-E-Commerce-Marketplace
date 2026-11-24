@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react'
 import { Link, useNavigate, useParams } from 'react-router-dom'
 import { toast } from 'react-toastify'
-import { fetchProduct } from '../api/catalog'
+import { fetchProduct, fetchProductReviews } from '../api/catalog'
 import { addToCart, addToWishlist } from '../api/shopping'
 import { useAuth } from '../auth/useAuth'
 
@@ -19,6 +19,7 @@ const ProductDetails = () => {
   const [loadedProductId, setLoadedProductId] = useState(null)
   const [error, setError] = useState('')
   const [actionBusy, setActionBusy] = useState(false)
+  const [reviews, setReviews] = useState([])
 
   useEffect(() => {
     let active = true
@@ -38,6 +39,12 @@ const ProductDetails = () => {
           setLoading(false)
         }
       })
+    return () => { active = false }
+  }, [productId])
+
+  useEffect(() => {
+    let active = true
+    fetchProductReviews(productId, { page: 0, size: 10 }).then((data) => { if (active) setReviews(data.content || []) }).catch(() => { if (active) setReviews([]) })
     return () => { active = false }
   }, [productId])
 
@@ -91,9 +98,13 @@ const ProductDetails = () => {
           {product.specifications?.length > 0 && <dl className="row mt-4">
             {product.specifications.map((item) => <div className="row" key={item.name}><dt className="col-5">{item.name}</dt><dd className="col-7">{item.value}</dd></div>)}
           </dl>}
-          <p className="small text-secondary">Availability and purchase options will appear here when the cart and inventory services are connected.</p>
+          <p className="small text-secondary">Availability: {product.availableQuantity > 0 ? `${product.availableQuantity} in stock` : 'Currently unavailable'}</p>
         </div>
       </div>
+      <section className="mt-5" aria-labelledby="reviews-heading">
+        <h2 id="reviews-heading" className="h4">Customer reviews</h2>
+        {reviews.length === 0 ? <p className="text-secondary">No approved reviews yet.</p> : <div className="row g-3">{reviews.map((review) => <article className="col-12 col-md-6" key={review.id}><div className="card card-body h-100"><div className="d-flex justify-content-between gap-2"><h3 className="h6 mb-1">{review.title}</h3><span aria-label={`${review.rating} out of 5 stars`}>{'★'.repeat(review.rating)}{'☆'.repeat(5 - review.rating)}</span></div><p className="mb-2">{review.body}</p><small className="text-secondary">{review.reviewer} · {new Date(review.createdAt).toLocaleDateString()}</small></div></article>)}</div>}
+      </section>
     </main>
   )
 }

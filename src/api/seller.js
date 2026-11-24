@@ -16,4 +16,6 @@ export const fetchSellerOrders = async (params) => (await apiClient.get('/seller
 export const updateSellerOrderStatus = async (id, status) => apiClient.patch(`/seller/orders/${encodeURIComponent(id)}/status`, { status })
 export const createShipment = async (id, request) => apiClient.post(`/seller/orders/${encodeURIComponent(id)}/shipments`, request)
 export const decideSellerReturn = async (orderId, requestId, decision, note = '') => apiClient.patch(`/seller/orders/${encodeURIComponent(orderId)}/returns/${encodeURIComponent(requestId)}`, { decision, note })
+export const receiveSellerReturn = async (orderId, requestId) => apiClient.post(`/seller/orders/${encodeURIComponent(orderId)}/returns/${encodeURIComponent(requestId)}/received`)
 export const fetchSellerReports = async (params) => (await apiClient.get('/seller/reports', { params })).data
+export const fetchSellerSettlements = async () => (await apiClient.get('/seller/settlements')).data

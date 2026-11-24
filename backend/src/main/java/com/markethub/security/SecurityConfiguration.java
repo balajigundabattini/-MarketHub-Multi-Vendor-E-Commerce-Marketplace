@@ -35,6 +35,7 @@ import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 import java.time.Clock;
+import jakarta.servlet.DispatcherType;
 
 @Configuration
 public class SecurityConfiguration {
@@ -101,26 +102,38 @@ public class SecurityConfiguration {
 
         http
                 .cors(Customizer.withDefaults())
-                // API requests use explicit Bearer headers. Refresh/logout use a signed double-submit token.
+                // API requests use explicit Bearer headers. Refresh/logout use a signed
+                // double-submit token.
                 .csrf(AbstractHttpConfigurer::disable)
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(authorize -> authorize
-                        .requestMatchers("/api/v1/health", "/actuator/health", "/actuator/info").permitAll()
+                        .requestMatchers(
+                                "/api/v1/health",
+                                "/actuator/health",
+                                "/actuator/health/**",
+                                "/actuator/info")
+                        .permitAll()
                         .requestMatchers(HttpMethod.POST,
                                 "/api/v1/auth/register", "/api/v1/auth/login",
                                 "/api/v1/auth/refresh", "/api/v1/auth/logout",
                                 "/api/v1/auth/verify-email", "/api/v1/auth/forgot-password",
-                                "/api/v1/auth/reset-password", "/api/v1/auth/resend-verification").permitAll()
+                                "/api/v1/auth/reset-password", "/api/v1/auth/resend-verification")
+                        .permitAll()
                         .requestMatchers(HttpMethod.POST, "/api/v1/payments/webhook").permitAll()
                         .requestMatchers(HttpMethod.GET, "/api/v1/catalog/**").permitAll()
+                        .requestMatchers("/api/v1/notifications/**").hasRole("CUSTOMER")
+                        .requestMatchers(HttpMethod.POST, "/api/v1/products/*/reviews").hasRole("CUSTOMER")
                         .requestMatchers("/api/v1/admin/**").hasRole("ADMIN")
                         .requestMatchers("/api/v1/seller/**").hasRole("SELLER")
                         .requestMatchers("/api/v1/seller-applications/**").hasRole("CUSTOMER")
-                        .requestMatchers("/api/v1/cart/**", "/api/v1/wishlist/**", "/api/v1/checkout/**", "/api/v1/orders/**", "/api/v1/payments/**").hasRole("CUSTOMER")
+                        .requestMatchers("/api/v1/cart/**", "/api/v1/wishlist/**", "/api/v1/checkout/**",
+                                "/api/v1/orders/**", "/api/v1/payments/**")
+                        .hasRole("CUSTOMER")
                         .requestMatchers("/api/v1/customer/**").hasRole("CUSTOMER")
+                        .dispatcherTypeMatchers(DispatcherType.ERROR).permitAll()
                         .anyRequest().authenticated())
-                .oauth2ResourceServer(oauth -> oauth.jwt(jwt ->
-                        jwt.jwtAuthenticationConverter(authenticationConverter)));
+                .oauth2ResourceServer(
+                        oauth -> oauth.jwt(jwt -> jwt.jwtAuthenticationConverter(authenticationConverter)));
         return http.build();
     }
 

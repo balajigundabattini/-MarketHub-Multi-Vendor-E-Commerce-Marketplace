@@ -30,6 +30,7 @@ import AdminLayout from '../Components/AdminLayout'
 import AdminDashboard from '../Pages/AdminDashboard'
 import AdminQueue from '../Pages/AdminQueue'
 import AdminResources from '../Pages/AdminResources'
+import AdminSettlements from '../Pages/AdminSettlements'
 
 const Routings = () => {
   return (
@@ -68,9 +69,11 @@ const Routings = () => {
         <Route path="sellers" element={<AdminQueue kind="sellers" />} />
         <Route path="categories" element={<AdminResources kind="categories" />} />
         <Route path="products" element={<AdminQueue kind="products" />} />
+        <Route path="reviews" element={<AdminQueue kind="reviews" />} />
         <Route path="orders" element={<AdminQueue kind="orders" />} />
         <Route path="coupons" element={<AdminResources kind="coupons" />} />
         <Route path="reports" element={<AdminResources kind="reports" />} />
+        <Route path="settlements" element={<AdminSettlements />} />
       </Route>
       <Route path="/forbidden" element={<main className="container py-5"><h1>Access denied</h1><p>Your account is not permitted to open this page.</p></main>} />
       <Route path="/home" element={<Navigate to="/" replace />} />

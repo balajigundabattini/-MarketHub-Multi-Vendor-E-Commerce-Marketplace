@@ -8,6 +8,8 @@ public record ProductResponse(Long id, String name, String sku, String slug, Str
         String description, BigDecimal price, String currency, Long categoryId, String categoryName,
         String storeName, String sellerName, String status, String imageUrl, String imageAlt,
         List<ProductImageResponse> images, List<SpecificationResponse> specifications,
-        Integer availableQuantity, Instant createdAt) {
-    public record SpecificationResponse(String name, String value) { }
+        Integer availableQuantity, Instant createdAt, BigDecimal averageRating,
+        Long reviewCount) {
+    public record SpecificationResponse(String name, String value) {
+    }
 }

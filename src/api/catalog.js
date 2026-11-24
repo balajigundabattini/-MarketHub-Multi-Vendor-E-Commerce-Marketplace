@@ -10,6 +10,11 @@ export const fetchProduct = async (productId) => {
   return data
 }
 
+export const fetchProductReviews = async (productId, params) => {
+  const { data } = await apiClient.get(`/catalog/products/${encodeURIComponent(productId)}/reviews`, { params })
+  return data
+}
+
 export const fetchCategories = async () => {
   const { data } = await apiClient.get('/catalog/categories')
   return data

@@ -11,6 +11,7 @@ import com.markethub.catalog.infrastructure.jpa.CategoryRepository;
 import com.markethub.catalog.infrastructure.jpa.InventoryRepository;
 import com.markethub.catalog.infrastructure.jpa.ProductEntity;
 import com.markethub.catalog.infrastructure.jpa.ProductRepository;
+import com.markethub.orders.infrastructure.jpa.ProductReviewRepository;
 import com.markethub.seller.domain.SellerStatus;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -20,17 +21,26 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
+import java.util.HashMap;
+import java.util.Map;
+// import com.markethub.orders.infrastructure.jpa.ProductReviewRepository;
 
 @Service
 public class CatalogService {
     private final CategoryRepository categories;
     private final ProductRepository products;
     private final InventoryRepository inventory;
+    private final ProductReviewRepository reviews;
 
-    public CatalogService(CategoryRepository categories, ProductRepository products, InventoryRepository inventory) {
+    public CatalogService(
+            CategoryRepository categories,
+            ProductRepository products,
+            InventoryRepository inventory,
+            ProductReviewRepository reviews) {
         this.categories = categories;
         this.products = products;
         this.inventory = inventory;
+        this.reviews = reviews;
     }
 
     @Transactional(readOnly = true)
@@ -45,7 +55,8 @@ public class CatalogService {
                 || minPrice != null && maxPrice != null && minPrice.compareTo(maxPrice) > 0) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Price range is invalid");
         }
-        if (page < 0 || size < 1 || size > 100) throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Page or page size is invalid");
+        if (page < 0 || size < 1 || size > 100)
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Page or page size is invalid");
         Sort order = switch (sort == null ? "newest" : sort) {
             case "newest" -> Sort.by(Sort.Direction.DESC, "createdAt");
             case "price_asc" -> Sort.by(Sort.Direction.ASC, "price");
@@ -56,24 +67,70 @@ public class CatalogService {
         Pageable pageable = PageRequest.of(page, size, order);
         String normalizedSearch = search == null || search.isBlank() ? null : search.trim();
         String normalizedCategory = categorySlug == null || categorySlug.isBlank() ? null : categorySlug.trim();
-        return products.searchCatalog(ProductStatus.ACTIVE, "ACTIVE", SellerStatus.APPROVED,
-                normalizedSearch, normalizedCategory, minPrice, maxPrice, pageable).map(this::response);
+        Page<ProductEntity> result = products.searchCatalog(
+                ProductStatus.ACTIVE, "ACTIVE", SellerStatus.APPROVED,
+                normalizedSearch, normalizedCategory, minPrice, maxPrice, pageable);
+
+        Map<Long, RatingStats> statistics = ratingStatistics(
+                result.getContent().stream().map(ProductEntity::getId).toList());
+
+        return result.map(product -> {
+            RatingStats stats = statistics.getOrDefault(
+                    product.getId(), new RatingStats(null, 0L));
+            return response(product, stats);
+        });
     }
 
     @Transactional(readOnly = true)
     public ProductResponse getProduct(Long id) {
         ProductEntity product = products.findByIdAndStatusAndStore_StatusAndStore_Seller_Status(
-                        id, ProductStatus.ACTIVE, "ACTIVE", SellerStatus.APPROVED)
+                id, ProductStatus.ACTIVE, "ACTIVE", SellerStatus.APPROVED)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Product was not found"));
-        return response(product);
+        RatingStats stats = ratingStatistics(List.of(product.getId()))
+                .getOrDefault(product.getId(), new RatingStats(null, 0L));
+
+        return response(product, stats);
     }
 
     private CategoryResponse categoryResponse(CategoryEntity category) {
-        return new CategoryResponse(category.getId(), category.getName(), category.getSlug(), category.getDescription(), category.isActive());
+        return new CategoryResponse(category.getId(), category.getName(), category.getSlug(), category.getDescription(),
+                category.isActive());
     }
 
-    private ProductResponse response(ProductEntity product) {
-        int available = inventory.findById(product.getId()).map(row -> row.getAvailable()).orElse(0);
-        return CatalogMapper.toResponse(product, available);
+    private ProductResponse response(ProductEntity product, RatingStats stats) {
+        int available = inventory.findById(product.getId())
+                .map(row -> row.getAvailable())
+                .orElse(0);
+
+        return CatalogMapper.toResponse(
+                product,
+                available,
+                stats.averageRating(),
+                stats.reviewCount());
+    }
+
+    private Map<Long, RatingStats> ratingStatistics(List<Long> productIds) {
+        Map<Long, RatingStats> result = new HashMap<>();
+
+        if (productIds.isEmpty()) {
+            return result;
+        }
+
+        for (Object[] row : reviews.getRatingStatistics(productIds)) {
+            Long productId = ((Number) row[0]).longValue();
+
+            BigDecimal averageRating = row[1] == null
+                    ? null
+                    : new BigDecimal(row[1].toString());
+
+            Long reviewCount = ((Number) row[2]).longValue();
+
+            result.put(productId, new RatingStats(averageRating, reviewCount));
+        }
+
+        return result;
+    }
+
+    private record RatingStats(BigDecimal averageRating, Long reviewCount) {
     }
 }

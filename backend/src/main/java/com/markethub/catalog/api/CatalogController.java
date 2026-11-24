@@ -4,6 +4,7 @@ import java.math.BigDecimal;
 import java.util.List;
 
 import com.markethub.catalog.application.CatalogService;
+import com.markethub.orders.application.ProductReviewService;
 import org.springframework.data.domain.Page;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -15,7 +16,8 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/api/v1/catalog")
 public class CatalogController {
     private final CatalogService catalog;
-    public CatalogController(CatalogService catalog) { this.catalog = catalog; }
+    private final ProductReviewService reviews;
+    public CatalogController(CatalogService catalog, ProductReviewService reviews) { this.catalog = catalog; this.reviews = reviews; }
 
     @GetMapping("/categories")
     public List<CategoryResponse> categories() { return catalog.activeCategories(); }
@@ -33,4 +35,5 @@ public class CatalogController {
 
     @GetMapping("/products/{productId}")
     public ProductResponse product(@PathVariable Long productId) { return catalog.getProduct(productId); }
+    @GetMapping("/products/{productId}/reviews") public Page<ProductReviewService.ReviewView> reviews(@PathVariable Long productId,@RequestParam(defaultValue="0")int page,@RequestParam(defaultValue="10")int size){return reviews.publicReviews(productId,page,size);}
 }

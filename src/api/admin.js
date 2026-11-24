@@ -15,3 +15,9 @@ export const refundAdminOrder = async (id, request) => (await apiClient.post(`/a
 export const fetchAdminCoupons = async () => (await apiClient.get('/admin/coupons')).data
 export const saveAdminCoupon = async (id, request) => id ? (await apiClient.put(`/admin/coupons/${encodeURIComponent(id)}`, request)).data : (await apiClient.post('/admin/coupons', request)).data
 export const fetchAdminReports = async (params) => (await apiClient.get('/admin/reports', { params })).data
+export const fetchAdminSettlements = async () => (await apiClient.get('/admin/settlements')).data
+export const createAdminSettlement = async (request) => (await apiClient.post('/admin/settlements', request)).data
+export const markAdminSettlementPaid = async (id, payoutReference) => (await apiClient.patch(`/admin/settlements/${encodeURIComponent(id)}/paid`, { payoutReference })).data
+export const fetchAdminReviews = async (params) => (await apiClient.get('/admin/reviews', { params })).data
+export const moderateAdminReview = async (id, status) => (await apiClient.patch(`/admin/reviews/${encodeURIComponent(id)}`, { status })).data
+export const fetchAdminSettlementSellers = async () => (await apiClient.get('/admin/seller-applications', { params: { page: 0, size: 100, status: 'APPROVED' } })).data

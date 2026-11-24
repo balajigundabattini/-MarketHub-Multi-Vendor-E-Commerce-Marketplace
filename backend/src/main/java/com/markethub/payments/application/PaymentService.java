@@ -9,6 +9,7 @@ import com.markethub.orders.infrastructure.jpa.OrderStatusHistoryEntity;
 import com.markethub.orders.infrastructure.jpa.OrderStatusHistoryRepository;
 import com.markethub.orders.infrastructure.jpa.SellerOrderStatusHistoryEntity;
 import com.markethub.orders.infrastructure.jpa.SellerOrderStatusHistoryRepository;
+import com.markethub.orders.application.NotificationService;
 import com.markethub.payments.api.PaymentResponse;
 import com.markethub.payments.infrastructure.jpa.PaymentEntity;
 import com.markethub.payments.infrastructure.jpa.PaymentRepository;
@@ -18,8 +19,8 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
 @Service
 public class PaymentService {
-    private final PaymentRepository payments; private final RazorpayGateway gateway; private final InventoryReservationRepository reservations; private final InventoryRepository inventory; private final OrderStatusHistoryRepository orderHistory; private final SellerOrderStatusHistoryRepository sellerHistory;
-    public PaymentService(PaymentRepository payments,RazorpayGateway gateway,InventoryReservationRepository reservations,InventoryRepository inventory,OrderStatusHistoryRepository orderHistory,SellerOrderStatusHistoryRepository sellerHistory) { this.payments=payments;this.gateway=gateway;this.reservations=reservations;this.inventory=inventory;this.orderHistory=orderHistory;this.sellerHistory=sellerHistory; }
+    private final PaymentRepository payments; private final RazorpayGateway gateway; private final InventoryReservationRepository reservations; private final InventoryRepository inventory; private final OrderStatusHistoryRepository orderHistory; private final SellerOrderStatusHistoryRepository sellerHistory; private final NotificationService notifications;
+    public PaymentService(PaymentRepository payments,RazorpayGateway gateway,InventoryReservationRepository reservations,InventoryRepository inventory,OrderStatusHistoryRepository orderHistory,SellerOrderStatusHistoryRepository sellerHistory,NotificationService notifications) { this.payments=payments;this.gateway=gateway;this.reservations=reservations;this.inventory=inventory;this.orderHistory=orderHistory;this.sellerHistory=sellerHistory;this.notifications=notifications; }
     @Transactional public PaymentResponse createForOrder(com.markethub.orders.infrastructure.jpa.OrderEntity order) { PaymentEntity p=payments.saveAndFlush(new PaymentEntity(order,"RAZORPAY",null)); p.retry(gateway.createOrder(p.getId(),p.getAmount(),p.getCurrency())); return response(payments.save(p)); }
     @Transactional(readOnly=true) public PaymentResponse get(Long userId,Long id) { return payments.findByIdAndOrderCustomerId(id,userId).map(this::response).orElseThrow(()->new ResponseStatusException(HttpStatus.NOT_FOUND,"Payment was not found")); }
     @Transactional public PaymentResponse retry(Long userId,Long id) { PaymentEntity p=owned(userId,id); if(!"FAILED".equals(p.getStatus())||!"PENDING_PAYMENT".equals(p.getOrder().getStatus())) throw new ResponseStatusException(HttpStatus.CONFLICT,"This payment cannot be retried"); p.retry(gateway.createOrder(p.getId(),p.getAmount(),p.getCurrency())); return response(p); }
@@ -29,7 +30,7 @@ public class PaymentService {
         long expected=PaymentAmounts.minorUnits(p.getAmount(),p.getCurrency());
         if(expected!=amountMinor||!p.getCurrency().equals(currency)) throw new ResponseStatusException(HttpStatus.BAD_REQUEST,"Provider payment amount does not match the order");
         if("payment.captured".equals(event)) capture(p,providerPaymentId);
-        else if("payment.failed".equals(event)) p.fail(providerPaymentId);
+        else if("payment.failed".equals(event)) { p.fail(providerPaymentId); notifications.create(p.getOrder().getCustomer().getId(),"Payment failed","Payment for order " + p.getOrder().getPublicOrderNumber() + " failed. Retry from your payment page.",p.getOrder()); }
     }
     private PaymentEntity owned(Long userId,Long id) { return payments.findOwnedForUpdate(id,userId).orElseThrow(()->new ResponseStatusException(HttpStatus.NOT_FOUND,"Payment was not found")); }
     private void capture(PaymentEntity p,String providerPaymentId) {
@@ -38,7 +39,7 @@ public class PaymentService {
             if("PAYMENT_EXPIRED".equals(order.getStatus())) { p.capture(providerPaymentId); order.markPaidNeedsReview(); orderHistory.save(new OrderStatusHistoryEntity(order,null,"PAYMENT_EXPIRED","PAYMENT_REVIEW_REQUIRED","Late provider capture requires manual fulfillment or refund review")); return; }
             throw new ResponseStatusException(HttpStatus.CONFLICT,"Order is no longer awaiting payment");
         }
-        p.capture(providerPaymentId); order.markPaid(); orderHistory.save(new OrderStatusHistoryEntity(order,null,"PENDING_PAYMENT","CONFIRMED","Payment captured"));
+        p.capture(providerPaymentId); order.markPaid(); notifications.create(order.getCustomer().getId(),"Payment received","Payment for order " + order.getPublicOrderNumber() + " was received.",order); orderHistory.save(new OrderStatusHistoryEntity(order,null,"PENDING_PAYMENT","CONFIRMED","Payment captured"));
         for(var seller:order.getSellerOrders()) { String old=seller.getStatus(); seller.setStatus("CONFIRMED"); sellerHistory.save(new SellerOrderStatusHistoryEntity(seller,null,old,"CONFIRMED","Payment captured")); for(var item:seller.getItems()) { var reserve=reservations.findByOrderItemId(item.getId()).orElseThrow(()->new ResponseStatusException(HttpStatus.CONFLICT,"Stock reservation is missing")); if("ACTIVE".equals(reserve.getStatus())) { var stock=inventory.findByProductIdForUpdate(reserve.getProduct().getId()).orElseThrow(); stock.commitReservation(reserve.getQuantity()); reserve.commit(); } } }
     }
     private boolean validSignature(String orderId,String paymentId,String signature) { try { Mac mac=Mac.getInstance("HmacSHA256"); mac.init(new SecretKeySpec(gateway.keySecret().getBytes(StandardCharsets.UTF_8),"HmacSHA256")); String expected=java.util.HexFormat.of().formatHex(mac.doFinal((orderId+"|"+paymentId).getBytes(StandardCharsets.UTF_8))); return MessageDigest.isEqual(expected.getBytes(StandardCharsets.US_ASCII),signature.getBytes(StandardCharsets.US_ASCII)); } catch(Exception e){return false;} }

@@ -27,6 +27,7 @@ public class SellerProductController {
     @GetMapping
     public Page<ProductResponse> list(@AuthenticationPrincipal Jwt jwt,
             @RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "20") int size) {
+                System.out.println(">>> SELLER PRODUCT CONTROLLER REACHED");
         return catalog.listProducts(userId(jwt), page, size);
     }
     @GetMapping("/{productId}")

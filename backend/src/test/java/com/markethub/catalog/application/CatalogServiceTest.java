@@ -17,6 +17,7 @@ import com.markethub.catalog.infrastructure.jpa.CategoryEntity;
 import com.markethub.catalog.infrastructure.jpa.CategoryRepository;
 import com.markethub.catalog.infrastructure.jpa.InventoryRepository;
 import com.markethub.catalog.infrastructure.jpa.ProductRepository;
+import com.markethub.orders.infrastructure.jpa.ProductReviewRepository;
 import com.markethub.seller.domain.SellerStatus;
 import org.junit.jupiter.api.Test;
 import org.springframework.data.domain.Page;
@@ -28,7 +29,8 @@ class CatalogServiceTest {
     private final CategoryRepository categories = mock(CategoryRepository.class);
     private final ProductRepository products = mock(ProductRepository.class);
     private final InventoryRepository inventory = mock(InventoryRepository.class);
-    private final CatalogService service = new CatalogService(categories, products, inventory);
+    private final ProductReviewRepository reviews = mock(ProductReviewRepository.class);
+    private final CatalogService service = new CatalogService(categories, products, inventory, reviews);
 
     @Test
     void returnsOnlyActiveCategories() {

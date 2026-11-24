@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useState } from 'react'
-import { createShipment, decideSellerReturn, fetchSellerOrders, updateSellerOrderStatus } from '../api/seller'
+import { createShipment, decideSellerReturn, fetchSellerOrders, receiveSellerReturn, updateSellerOrderStatus } from '../api/seller'
 
 const SellerOrders = () => {
   const [orders, setOrders] = useState([])
@@ -44,6 +44,12 @@ const SellerOrders = () => {
     catch (requestError) { setError(requestError.response?.data?.detail || 'Return request could not be updated.') }
     finally { setBusyId(null) }
   }
+  const receiveReturn = async (order, request) => {
+    setBusyId(order.id); setError('')
+    try { await receiveSellerReturn(order.id, request.id); await load(); setMessage('Returned item received and inventory restocked.') }
+    catch (requestError) { setError(requestError.response?.data?.detail || 'Return receipt could not be recorded.') }
+    finally { setBusyId(null) }
+  }
 
   return <main><h1 className="h2 mb-4">Seller orders</h1>{message && <p className="alert alert-info" role="status">{message}</p>}{error && <p className="alert alert-warning" role="alert">{error}</p>}
     {loading ? <p role="status">Loading seller orders…</p> : orders.length === 0 ? <div className="card card-body">No seller orders have arrived yet.</div> : <div className="d-grid gap-3">
@@ -61,8 +67,8 @@ const SellerOrders = () => {
           </div>
           {(order.returnRequests || []).map((request) => <section className="border rounded p-3 mt-3" key={request.id} aria-label="Return request">
             <div className="d-flex flex-wrap justify-content-between gap-2"><div><strong>Return requested: {request.itemName} × {request.quantity}</strong><p className="mb-1">{request.reason}</p><small className="text-secondary">{new Date(request.createdAt).toLocaleString()}</small></div>
-              <div className="d-flex align-items-start gap-2"><button className="btn btn-sm btn-primary" type="button" disabled={busyId === order.id} onClick={() => decideReturn(order, request, 'APPROVED')}>Approve</button><button className="btn btn-sm btn-outline-danger" type="button" disabled={busyId === order.id} onClick={() => decideReturn(order, request, 'REJECTED')}>Reject</button></div></div>
-            <p className="small text-secondary mt-2 mb-0">Approval authorizes the return; refund and inventory restock are handled after receipt through the applicable refund process.</p>
+              <div className="d-flex align-items-start gap-2">{request.status === 'REQUESTED' ? <><button className="btn btn-sm btn-primary" type="button" disabled={busyId === order.id} onClick={() => decideReturn(order, request, 'APPROVED')}>Approve</button><button className="btn btn-sm btn-outline-danger" type="button" disabled={busyId === order.id} onClick={() => decideReturn(order, request, 'REJECTED')}>Reject</button></> : <button className="btn btn-sm btn-success" type="button" disabled={busyId === order.id} onClick={() => receiveReturn(order, request)}>Mark received and restock</button>}</div></div>
+            <p className="small text-secondary mt-2 mb-0">Status: {request.status}. Marking received restocks inventory; it does not issue a customer refund.</p>
           </section>)}
           {order.canShip && <div className="row g-2 mt-2 align-items-end">
             <div className="col-sm-4"><label className="form-label" htmlFor={`carrier-${order.id}`}>Carrier</label><input id={`carrier-${order.id}`} className="form-control" maxLength={100} value={shipmentForms[order.id]?.carrier || ''} onChange={(event) => setShipmentForms({ ...shipmentForms, [order.id]: { ...shipmentForms[order.id], carrier: event.target.value } })} /></div>

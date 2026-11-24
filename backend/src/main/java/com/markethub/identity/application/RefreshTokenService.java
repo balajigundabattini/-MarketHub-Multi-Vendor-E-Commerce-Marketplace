@@ -9,6 +9,7 @@ import java.time.Instant;
 import java.util.Base64;
 import java.util.HexFormat;
 import java.util.Locale;
+import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
 import java.util.stream.Collectors;
@@ -54,9 +55,11 @@ public class RefreshTokenService {
 
     @Transactional
     public RotationResult rotate(String rawToken) {
-        if (rawToken == null || rawToken.isBlank()) return RotationResult.invalid();
+        if (rawToken == null || rawToken.isBlank())
+            return RotationResult.invalid();
         var existing = refreshTokenRepository.findByHashForUpdate(hash(rawToken));
-        if (existing.isEmpty()) return RotationResult.invalid();
+        if (existing.isEmpty())
+            return RotationResult.invalid();
 
         RefreshTokenEntity token = existing.get();
         Instant now = clock.instant();
@@ -89,11 +92,14 @@ public class RefreshTokenService {
 
     @Transactional
     public void revoke(String rawToken) {
-        if (rawToken == null || rawToken.isBlank()) return;
-        refreshTokenRepository.findByHashForUpdate(hash(rawToken)).ifPresent(token -> {
-            if (token.getRevokedAt() == null) token.revoke(clock.instant());
-        });
+    if (rawToken == null || rawToken.isBlank()) return;
+    refreshTokenRepository.findByHashForUpdate(hash(rawToken)).ifPresent(token ->
+    {
+    if (token.getRevokedAt() == null) token.revoke(clock.instant());
+    });
+
     }
+
 
     @Transactional
     public void revokeAllForUser(Long userId) {
@@ -120,12 +126,21 @@ public class RefreshTokenService {
     }
 
     public record RotationResult(State state, MarketHubPrincipal principal, IssuedRefreshToken refreshToken) {
-        public enum State { SUCCESS, INVALID, REUSE_DETECTED }
+        public enum State {
+            SUCCESS, INVALID, REUSE_DETECTED
+        }
 
-        static RotationResult invalid() { return new RotationResult(State.INVALID, null, null); }
-        static RotationResult reuseDetected() { return new RotationResult(State.REUSE_DETECTED, null, null); }
+        static RotationResult invalid() {
+            return new RotationResult(State.INVALID, null, null);
+        }
+
+        static RotationResult reuseDetected() {
+            return new RotationResult(State.REUSE_DETECTED, null, null);
+        }
+
         static RotationResult success(MarketHubPrincipal principal, IssuedRefreshToken refreshToken) {
             return new RotationResult(State.SUCCESS, principal, refreshToken);
         }
     }
+
 }

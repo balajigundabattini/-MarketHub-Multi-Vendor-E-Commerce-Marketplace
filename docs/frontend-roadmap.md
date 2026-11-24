@@ -33,7 +33,8 @@ This tracks the React screens requested in the MarketHub project brief. Screens 
 - [x] Stock management and inventory adjustments.
 - [x] Seller order processing and shipment updates.
 - [x] Sales and commission reports.
-- [ ] Return handling and settlement disbursement views need backend lifecycle contracts.
+- [x] Return request decisions and delivered status in seller order management.
+- [x] Seller settlement history and admin settlement creation/payment-reference workflow.
 
 ## Admin dashboard
 
@@ -47,12 +48,12 @@ This tracks the React screens requested in the MarketHub project brief. Screens 
 
 - [x] Role-specific navigation and nested layouts for customer, seller, and admin areas.
 - [x] Loading, empty, validation, and API failure states across primary workflows.
-- Reusable tables, data filters, pagination, confirmation dialogs, and accessible form controls.
+- [x] Reusable tables, data filters, pagination, confirmation dialogs, and accessible form controls.
 - [ ] Frontend tests for authentication, route access, forms, and shopping flows (no frontend test runner is configured).
 
 ## Dependency order
 
-The backend currently implements identity, customer profile/address, seller onboarding/store management, catalog discovery, seller product/inventory management, category/product moderation, and cart/wishlist APIs. Checkout, payment, seller orders/reports, and other admin services are still outstanding. Provider checkout needs a server-issued provider session. Product images currently use URL inputs; secure upload needs a backend storage contract.
+The backend implements identity, customer profile/address, seller onboarding/store management, catalog discovery, seller product/inventory management, category/product moderation, cart/wishlist, checkout, payments, fulfillment, reporting, reviews, notifications, and seller settlement records. Product images still use URL inputs; secure upload needs a backend storage contract. Partial/COD refunds and COD payout reconciliation remain future work.
 
 ## Catalog frontend API contract
 
@@ -62,6 +63,7 @@ The catalog pages call these public endpoints, implemented in backend Phase 7:
 - `GET /api/v1/catalog/products` accepts `search`, `category` (slug), `minPrice`, `maxPrice`, `sort` (`newest`, `price_asc`, `price_desc`, `name_asc`), zero-based `page`, and `size`.
 - Product listing responses use Spring page fields: `{ content, number, size, totalElements, totalPages }`; each item has `{ id, name, brand, price, currency, storeName, imageUrl, imageAlt }`.
 - `GET /api/v1/catalog/products/{id}` returns `{ id, name, brand, description, price, currency, storeName, categoryName, images: [{ url, altText }], specifications: [{ name, value }] }`.
+- `GET /api/v1/catalog/products/{id}/reviews?page=&size=` returns approved purchase-verified reviews.
 
 The `/compare` screen loads two to four product details using the same detail endpoint. The screens show API loading, empty, and failure states and do not fabricate catalog items.
 
@@ -95,7 +97,9 @@ Application/store profile endpoints are implemented in backend Phase 6. Product 
 - `GET /api/v1/seller/products?page=&size=` returns a Spring page of product data; detail/create/update use `/api/v1/seller/products/{id}` and `/api/v1/seller/products`. `POST /api/v1/seller/products/{id}/deactivate` deactivates a listing. New and edited listings enter moderation.
 - `GET /api/v1/seller/inventory` returns rows `{ productId, name, sku, onHand, reserved, available }`; `PATCH /api/v1/seller/inventory/{productId}` accepts `{ onHand, reason }`, locks the stock row, and rejects quantities below reserved stock.
 - `GET /api/v1/seller/orders?page=&size=` returns order rows and policy flags (`canAccept`, `canReject`, `canStartProcessing`, `canShip`); `PATCH /api/v1/seller/orders/{id}/status` accepts `{ status }`; shipment creation accepts `{ carrier, trackingNumber }`.
+- Seller order status can be changed to `DELIVERED` after shipping; pending returns are included in order rows and reviewed with `PATCH /api/v1/seller/orders/{id}/returns/{requestId}` using `{ decision: APPROVED|REJECTED, note? }`.
 - `GET /api/v1/seller/reports?from=&to=` returns `{ grossSales, commission, settlement, currency, daily }`.
+- `GET /api/v1/seller/settlements` returns the seller's settlement records. Admins create a settlement with `{ sellerId, periodFrom, periodTo }` at `/api/v1/admin/settlements` and record payment with `PATCH /api/v1/admin/settlements/{id}/paid` using `{ payoutReference }`.
 
 ## Admin frontend API contract
 
@@ -110,4 +114,4 @@ Seller application listing and approval/rejection endpoints are implemented in b
 - `GET /api/v1/admin/coupons` lists rules; create/update accepts code, discount type/value, minimum, usage limit, start/end dates, and active state.
 - `GET /api/v1/admin/reports?from=&to=` returns `{ grossSales, orderCount, commissionTotal, refundTotal, daily }`.
 
-Remaining advanced admin controls are future contracts. Dashboard, customer/order queues, full online refunds, reports, coupons, category, and product management endpoints are implemented. Admin mutations require server-side authorization and audit records; client route guards only control navigation.
+Admin dashboard, customer/order queues, full online refunds, reports, coupons, category/product/review moderation, and settlement disbursement recording are implemented. Admin mutations require server-side authorization; client route guards only control navigation.

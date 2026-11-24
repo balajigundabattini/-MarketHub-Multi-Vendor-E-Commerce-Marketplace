@@ -36,7 +36,7 @@ class SellerManagementServiceTest {
         UserEntity sellerUser = mock(UserEntity.class);
         UserEntity admin = mock(UserEntity.class);
         RoleEntity sellerRole = mock(RoleEntity.class);
-        when(sellers.findByIdWithUser(17L)).thenReturn(Optional.of(seller));
+        when(sellers.findByIdWithUserForUpdate(17L)).thenReturn(Optional.of(seller));
         when(seller.getStatus()).thenReturn(SellerStatus.PENDING_REVIEW, SellerStatus.APPROVED);
         when(seller.getId()).thenReturn(17L);
         when(seller.getUser()).thenReturn(sellerUser);
@@ -62,7 +62,7 @@ class SellerManagementServiceTest {
         SellerEntity seller = mock(SellerEntity.class);
         UserEntity sellerUser = mock(UserEntity.class);
         UserEntity admin = mock(UserEntity.class);
-        when(sellers.findByIdWithUser(17L)).thenReturn(Optional.of(seller));
+        when(sellers.findByIdWithUserForUpdate(17L)).thenReturn(Optional.of(seller));
         when(seller.getStatus()).thenReturn(SellerStatus.PENDING_REVIEW, SellerStatus.REJECTED);
         when(seller.getId()).thenReturn(17L);
         when(seller.getUser()).thenReturn(sellerUser);
