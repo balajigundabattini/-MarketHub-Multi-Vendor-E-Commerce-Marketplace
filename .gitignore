@@ -26,3 +26,11 @@ backend/target/
 *.njsproj
 *.sln
 *.sw?
+
+# Environment variables
+.env
+.env.*
+
+# Spring Boot local configuration containing secrets
+backend/src/main/resources/application.properties
+backend/src/main/resources/application-local.properties
