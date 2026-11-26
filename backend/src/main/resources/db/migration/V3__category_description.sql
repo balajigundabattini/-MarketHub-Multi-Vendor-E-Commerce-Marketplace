@@ -1,2 +1,2 @@
 ALTER TABLE categories
-    MODIFY COLUMN description VARCHAR(500) NULL;
+    ADD COLUMN description VARCHAR(500) NULL AFTER slug;

@@ -12,6 +12,6 @@
 
 ## Limits
 
-The admin refund action is a full refund through Razorpay; partial refunds and COD refunds are not exposed. A refund is not retried automatically after provider failure. Reports currently present totals as INR and assume the marketplace uses INR consistently. The commission rate should be set to the marketplace's actual commercial agreement before launch.
+Admin refunds support full captured-payment refunds and item-level online refunds. COD refunds are not supported, and a provider failure requires operational follow-up rather than automatic retry. Reports currently present totals as INR and assume the marketplace uses INR consistently. The commission rate should be set to the marketplace's actual commercial agreement before launch.
 
 Configure Razorpay webhooks for `payment.captured`, `payment.failed`, `refund.processed`, and `refund.failed`, and set `RAZORPAY_WEBHOOK_SECRET`. The refund endpoint follows Razorpay's API behavior of refunding the captured payment when no amount is supplied ([Razorpay refund API](https://hdfcbank-collectnow-docs.razorpay.com/api/refunds/create-instant/)).

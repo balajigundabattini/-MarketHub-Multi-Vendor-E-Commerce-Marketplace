@@ -49,7 +49,17 @@ Public catalog routes are `GET /api/v1/catalog/categories`, `GET /api/v1/catalog
 
 The authenticated customer cart and wishlist routes use `/api/v1/cart` and `/api/v1/wishlist`. Cart prices are read from current product data; the cart does not reserve stock and is not an authoritative checkout quote. Cart and wishlist operations are scoped to the authenticated customer's IDs.
 
-Checkout, customer orders, coupons, Razorpay payments/refunds, seller fulfillment/reports, admin customer/order queues, and platform reports are implemented. Partial/COD refunds and remaining admin controls are pending. Payment integration requires `RAZORPAY_KEY_ID`, `RAZORPAY_KEY_SECRET`, and `RAZORPAY_WEBHOOK_SECRET`. See [Phase 6 seller management](../docs/phase-6-seller-management.md), [Phase 7 catalog and products](../docs/phase-7-catalog-and-products.md), [Phase 8 cart and wishlist](../docs/phase-8-cart-and-wishlist.md), [Phase 9 checkout and orders](../docs/phase-9-checkout-and-orders.md), [Phase 10 payments and fulfillment](../docs/phase-10-payments-and-fulfillment.md), and [Phase 11 admin refunds and reports](../docs/phase-11-admin-refunds-and-reports.md) for workflow details and boundaries.
+Checkout, customer orders, coupons, Razorpay payments/refunds, seller fulfillment/settlements, reviews, notifications, admin queues, and platform reports are implemented. Online item-level refunds are supported; COD refunds and COD collection reconciliation remain pending. Payment integration requires `RAZORPAY_KEY_ID`, `RAZORPAY_KEY_SECRET`, and `RAZORPAY_WEBHOOK_SECRET`. See [Phase 6 seller management](../docs/phase-6-seller-management.md), [Phase 7 catalog and products](../docs/phase-7-catalog-and-products.md), [Phase 8 cart and wishlist](../docs/phase-8-cart-and-wishlist.md), [Phase 9 checkout and orders](../docs/phase-9-checkout-and-orders.md), [Phase 10 payments and fulfillment](../docs/phase-10-payments-and-fulfillment.md), [Phase 11 admin refunds and reports](../docs/phase-11-admin-refunds-and-reports.md), and [Phase 12 reviews, notifications, and settlements](../docs/phase-12-reviews-notifications-settlements.md) for workflow details and boundaries.
+
+## Docker deployment
+
+Build from the backend directory as the context (the Dockerfile and `.dockerignore` are located there):
+
+```powershell
+docker build -t markethub-backend .
+```
+
+The image activates the `docker` Spring profile, uses Flyway with Hibernate schema validation, excludes local application configuration, and runs as an unprivileged user. Supply `DB_URL`, `DB_USERNAME`, `DB_PASSWORD`, `JWT_SECRET_BASE64`, `FRONTEND_ORIGIN`, `SMTP_HOST`, and the three Razorpay secrets through your deployment platform's secret/configuration store. The database hostname in `DB_URL` must be reachable from the container; `localhost` refers to the container itself. Set `REFRESH_COOKIE_SECURE=true` and use HTTPS in production.
 
 ## Run tests
 
@@ -58,3 +68,5 @@ Checkout, customer orders, coupons, Razorpay payments/refunds, seller fulfillmen
 ```
 
 The automated backend suite includes health, identity, address, seller application, catalog filter, and seller ownership tests. Running against MySQL additionally requires a configured local database; Flyway migrations and Hibernate schema validation run on application startup.
+
+The MySQL integration tests use a separate `markethub_test` database and require `TEST_DB_USERNAME` and `TEST_DB_PASSWORD`. The test profile validates the schema after Flyway migrations rather than changing it.

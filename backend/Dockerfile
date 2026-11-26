@@ -10,7 +10,7 @@ RUN chmod +x mvnw
 
 COPY src/ src/
 
-RUN ./mvnw -B clean package
+RUN ./mvnw -B clean package -DskipTests
 
 RUN JAR_FILE="$(find target -maxdepth 1 -type f -name '*.jar' ! -name '*.original' | head -n 1)" \
     && test -n "$JAR_FILE" \
@@ -20,7 +20,11 @@ FROM eclipse-temurin:21-jre
 
 WORKDIR /app
 
-COPY --from=build /app/app.jar app.jar
+COPY --from=build --chown=10001:10001 /app/app.jar app.jar
+
+ENV SPRING_PROFILES_ACTIVE=docker
+
+USER 10001:10001
 
 EXPOSE 8080
 

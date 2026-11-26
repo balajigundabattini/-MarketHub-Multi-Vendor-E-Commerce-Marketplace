@@ -4,7 +4,7 @@
 
 - Customer reviews require an owned, delivered order item and can be submitted once per item. Reviews remain pending until an admin approves or rejects them. Approved reviews appear on product detail pages.
 - Customers can page through their notifications and mark one or all read. Order placement, payment capture/failure, delivery, return decisions, and review moderation create notifications.
-- Sellers can mark shipped orders delivered and decide pending return requests. Return approval authorizes the return; it does not issue a partial refund or restock inventory before receipt.
+- Sellers can mark shipped orders delivered, decide pending return requests, and record receipt of approved returns. Recording receipt restocks the returned quantity; online item refunds are handled separately by an admin.
 - Admins can create settlement records for an approved seller and a bounded date range, then record a payout reference. Sellers see their own settlement history.
 - Settlement amounts include delivered, paid orders only, reject mixed currencies, exclude refunded orders, and prevent overlapping periods for the same seller.
 
@@ -24,5 +24,5 @@
 ## Remaining operational limits
 
 - Settlement records are payout ledger entries; this release does not initiate bank transfers.
-- COD collection reconciliation and partial item refunds remain unimplemented. Approved returns do not restock until an explicit receipt workflow is added.
-- Frontend automated tests are not configured in this repository; lint and production build remain the frontend checks.
+- COD collection reconciliation and COD refunds remain unimplemented. Item-level online refunds are available through the admin refund workflow.
+- Frontend Vitest/React Testing Library coverage currently checks protected-route behavior and cart interactions; broader form and shopping-flow coverage remains future work.

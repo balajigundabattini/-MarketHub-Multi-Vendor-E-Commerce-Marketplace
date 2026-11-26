@@ -49,11 +49,11 @@ This tracks the React screens requested in the MarketHub project brief. Screens 
 - [x] Role-specific navigation and nested layouts for customer, seller, and admin areas.
 - [x] Loading, empty, validation, and API failure states across primary workflows.
 - [x] Reusable tables, data filters, pagination, confirmation dialogs, and accessible form controls.
-- [ ] Frontend tests for authentication, route access, forms, and shopping flows (no frontend test runner is configured).
+- [x] Frontend test runner configured with starter coverage for protected routes and cart interactions; broader forms and shopping-flow coverage remains.
 
 ## Dependency order
 
-The backend implements identity, customer profile/address, seller onboarding/store management, catalog discovery, seller product/inventory management, category/product moderation, cart/wishlist, checkout, payments, fulfillment, reporting, reviews, notifications, and seller settlement records. Product images still use URL inputs; secure upload needs a backend storage contract. Partial/COD refunds and COD payout reconciliation remain future work.
+The backend implements identity, customer profile/address, seller onboarding/store management, catalog discovery, seller product/inventory management, category/product moderation, cart/wishlist, checkout, payments, fulfillment, reporting, reviews, notifications, seller settlement records, and online item-level refunds. Product images still use URL inputs; secure upload needs a backend storage contract. COD refunds and COD payout reconciliation remain future work.
 
 ## Catalog frontend API contract
 
@@ -69,7 +69,7 @@ The `/compare` screen loads two to four product details using the same detail en
 
 ## Cart and checkout frontend API contract
 
-Cart and wishlist endpoints are implemented in backend Phase 8. Checkout quotes and customer orders are implemented in Phase 9. Razorpay Checkout, payment verification, webhooks, and seller fulfillment are implemented in Phase 10. Full online refunds, admin customer/order queues, and seller/platform reports are implemented in Phase 11; partial and COD refunds remain future work.
+Cart and wishlist endpoints are implemented in backend Phase 8. Checkout quotes and customer orders are implemented in Phase 9. Razorpay Checkout, payment verification, webhooks, and seller fulfillment are implemented in Phase 10. Full and item-level online refunds, admin customer/order queues, and seller/platform reports are implemented in Phase 11; COD refunds remain future work.
 
 - `GET /api/v1/cart` returns `{ items: [{ id, productId, name, quantity, availableQuantity, unitPrice, lineTotal, currency, imageUrl, imageAlt, sellerName }], subtotal, currency }`.
 - `PUT /api/v1/cart/items/{id}` accepts `{ quantity }`; `DELETE /api/v1/cart/items/{id}` removes the line. Both mutations return the updated cart representation.

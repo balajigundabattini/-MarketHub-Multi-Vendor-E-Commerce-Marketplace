@@ -4,19 +4,19 @@ MarketHub is a portfolio project for a multi-vendor marketplace. Customers will 
 
 Project repository: [balajigundabattini/-MarketHub-Multi-Vendor-E-Commerce-Marketplace](https://github.com/balajigundabattini/-MarketHub-Multi-Vendor-E-Commerce-Marketplace)
 
-The project is being built in phases as a modular monolith: a React frontend, a Java 21 / Spring Boot REST backend, and MySQL. Customer identity/profile/address, seller onboarding, catalog discovery, seller product/inventory, moderation, cart, wishlist, checkout, coupons, customer orders, Razorpay payment verification, fulfillment, refunds, seller reports, and core admin queues/dashboard are implemented. Some advanced admin workflows remain in progress.
+The project is built in phases as a modular monolith: a React frontend, a Java 21 / Spring Boot REST backend, and MySQL. Customer identity/profile/address, seller onboarding, catalog discovery, seller product/inventory, moderation, cart, wishlist, checkout, coupons, customer orders, Razorpay payment verification, fulfillment, online refunds, seller reports, reviews, notifications, settlements, and core admin workflows are implemented. COD refund/reconciliation workflows and secure product image uploads remain future work.
 
 ## Current status
 
 - Project identity and initial requirements/scope are established.
 - Frontend scaffold: React, Vite, JavaScript, React Router, Redux Toolkit, Axios, and Bootstrap.
 - Backend scaffold: Java 21, Spring Boot 4.1.2, Maven Wrapper, Actuator, and a health endpoint.
-- Flyway migrations define identity, customer, seller, catalog, shopping, checkout, coupon, order, payment, shipment, refund, and audit tables; applying them and validating against a configured local database is still required.
+- Flyway migrations define identity, customer, seller, catalog, shopping, checkout, coupon, order, payment, shipment, refund, review, notification, settlement, and audit tables.
 - Authentication API: customer registration with email verification, login, refresh rotation, logout, password recovery, JWT resource-server validation, and frontend session restoration.
 - Customer profile and address API: authenticated profile updates and owner-scoped delivery address management with default selection and soft deletion.
 - Seller application review, store profiles, seller product and inventory APIs, public catalog discovery, and admin category/product moderation.
 - Persistent customer cart and wishlist APIs with current price/stock checks.
-- Partial/COD refunds, advanced admin controls, and other remaining workflows: not yet implemented.
+- Online item-level refunds and admin review/settlement controls are implemented. COD refunds and collection reconciliation are not implemented.
 
 See [Phase 1 requirements and scope](docs/phase-1-requirements-and-scope.md) for roles, business rules, MVP boundaries, and implementation dependencies.
 
@@ -39,7 +39,7 @@ cd backend
 ./mvnw.cmd test
 ```
 
-The frontend has build and lint scripts. It does not yet define a separate frontend test script.
+The frontend has build, lint, and Vitest test scripts. Current tests cover protected-route behavior and cart interactions.
 
 ## Run the frontend
 
@@ -55,6 +55,7 @@ Other available commands:
 ```bash
 npm run build
 npm run lint
+npm test
 npm run preview
 ```
 
@@ -66,7 +67,7 @@ The login and registration pages call the MarketHub authentication API. Configur
 - **Backend:** Java 21, Spring Boot, Spring MVC, Spring Security, Spring Data JPA, Hibernate
 - **Database:** MySQL
 - **Payments:** Razorpay test mode
-- **Later, when justified:** Redis, Kafka, Docker, and cloud deployment
+- **Deployment:** Docker support is provided for the backend; production secrets and database settings must be supplied through environment variables.
 
 ## Planned project areas
 
