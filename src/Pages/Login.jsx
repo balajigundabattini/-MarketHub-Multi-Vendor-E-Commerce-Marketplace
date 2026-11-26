@@ -3,7 +3,7 @@ import { Link, useLocation, useNavigate } from 'react-router-dom'
 import { toast } from 'react-toastify'
 import apiClient from '../api/client'
 import { useAuth } from '../auth/useAuth'
-import '../Styles/login.css'
+import '../Styles/Login.css'
 
 const Login = () => {
     const [email, setEmail] = useState('')
