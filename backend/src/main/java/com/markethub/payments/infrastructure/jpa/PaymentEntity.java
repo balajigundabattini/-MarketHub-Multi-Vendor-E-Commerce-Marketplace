@@ -128,4 +128,8 @@ public class PaymentEntity {
     public Instant getCapturedAt() {
         return capturedAt;
     }
+
+    public void partialRefundProcessed() {
+    // Keep payment CAPTURED because other items may still be paid for.
+    }
 }

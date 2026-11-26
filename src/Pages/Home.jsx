@@ -10,9 +10,9 @@ const Home = () => (
         We are building the marketplace step by step.
       </p>
       <div className="hero-actions">
-        <Link className="button button-primary" to="/products">Browse products</Link>
-        <Link className="button button-primary" to="/register">Create an account</Link>
-        <Link className="button button-secondary" to="/login">Sign in</Link>
+        <Link className="button button-primary text-decoration-none" to="/products">Browse products</Link>
+        <Link className="button button-primary text-decoration-none" to="/register">Create an account</Link>
+        <Link className="button button-secondary text-decoration-none" to="/login">Sign in</Link>
       </div>
     </section>
 

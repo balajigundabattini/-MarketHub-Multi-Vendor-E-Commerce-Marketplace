@@ -144,15 +144,32 @@ public class SellerFulfillmentService {
         }
 
         @Transactional
-        public SellerOrderResponse ship(Long userId, Long id, String carrier, String trackingNumber) {
+        public SellerOrderResponse ship(
+                        Long userId,
+                        Long id,
+                        String carrier,
+                        String trackingNumber) {
+
                 SellerOrderEntity order = owned(userId, id);
-                if (!"PROCESSING".equals(order.getStatus()))
-                        throw new ResponseStatusException(HttpStatus.CONFLICT, "Only processing orders can be shipped");
+
+                if (!"PROCESSING".equals(order.getStatus())) {
+                        throw new ResponseStatusException(
+                                        HttpStatus.CONFLICT,
+                                        "Only processing orders can be shipped");
+                }
+
                 if (shipments.findAllBySellerOrderId(id).stream()
-                                .anyMatch(s -> s.getTrackingNumber().equalsIgnoreCase(trackingNumber.trim())))
-                        throw new ResponseStatusException(HttpStatus.CONFLICT,
+                                .anyMatch(s -> s.getTrackingNumber()
+                                                .equalsIgnoreCase(trackingNumber.trim()))) {
+
+                        throw new ResponseStatusException(
+                                        HttpStatus.CONFLICT,
                                         "This tracking number is already recorded");
-                shipments.save(new ShipmentEntity(order, carrier.trim(), trackingNumber.trim()));
+                }
+
+                shipments.save(
+                                new ShipmentEntity(order, carrier.trim(), trackingNumber.trim()));
+
                 for (var item : order.getItems()) {
 
                         if (!"ACTIVE".equals(item.getStatus())) {
@@ -161,30 +178,34 @@ public class SellerFulfillmentService {
 
                         var reservation = reservations.findByOrderItemId(item.getId())
                                         .orElseThrow(() -> new ResponseStatusException(
-                                                        HttpStatus.CONFLICT, "Active inventory reservation not found"));
+                                                        HttpStatus.CONFLICT,
+                                                        "Inventory reservation not found"));
 
-                        if (!"ACTIVE".equals(reservation.getStatus())) {
+                        if (!"COMMITTED".equals(reservation.getStatus())) {
                                 throw new ResponseStatusException(
-                                                HttpStatus.CONFLICT, "Inventory reservation is not active");
+                                                HttpStatus.CONFLICT,
+                                                "Inventory must be committed before shipping");
                         }
-
-                        var stock = inventory.findByProductIdForUpdate(reservation.getProduct().getId())
-                                        .orElseThrow(() -> new ResponseStatusException(
-                                                        HttpStatus.CONFLICT, "Inventory record not found"));
-
-                        stock.commitReservation(reservation.getQuantity());
-                        reservation.commit();
 
                         item.setStatus("SHIPPED");
                 }
+
                 order.setStatus("SHIPPED");
+
                 var actor = users.findById(userId)
-                                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND,
+                                .orElseThrow(() -> new ResponseStatusException(
+                                                HttpStatus.NOT_FOUND,
                                                 "Seller account was not found"));
-                history.save(new SellerOrderStatusHistoryEntity(order, actor, "PROCESSING", "SHIPPED",
+
+                history.save(new SellerOrderStatusHistoryEntity(
+                                order,
+                                actor,
+                                "PROCESSING",
+                                "SHIPPED",
                                 "Shipment recorded"));
 
                 orderStatusAggregation.recalculate(order.getOrder());
+
                 return response(order);
         }
 

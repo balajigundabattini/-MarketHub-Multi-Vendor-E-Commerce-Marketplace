@@ -76,24 +76,34 @@ public class OrderService {
 
                 OrderEntity order = ownedOrder(userId, orderId);
 
-                if (!List.of("PENDING_PAYMENT", "CONFIRMED").contains(order.getStatus())) {
-                        throw new ResponseStatusException(
-                                        HttpStatus.CONFLICT,
-                                        "This order can no longer be cancelled");
-                }
-
-                if ("PAID".equals(order.getPaymentStatus())) {
-                        throw new ResponseStatusException(
-                                        HttpStatus.CONFLICT,
-                                        "Paid order cancellation requires a refund workflow");
-                }
-
                 OrderItemEntity item = ownedItem(userId, orderId, itemId);
 
+                // Only active items can be cancelled.
+                // Shipped, delivered, already cancelled and other item states are rejected.
                 if (!"ACTIVE".equals(item.getStatus())) {
                         throw new ResponseStatusException(
                                         HttpStatus.CONFLICT,
-                                        "This item cannot be cancelled");
+                                        "This item can no longer be cancelled");
+                }
+
+                boolean paid = "PAID".equals(order.getPaymentStatus());
+
+                if (paid) {
+                        // Do not allow cancellation when the entire order is already
+                        // cancelled or in a full-refund lifecycle.
+                        if (List.of("CANCELLED", "REFUND_PENDING", "REFUNDED")
+                                        .contains(order.getStatus())) {
+                                throw new ResponseStatusException(
+                                                HttpStatus.CONFLICT,
+                                                "This order can no longer be cancelled");
+                        }
+                } else {
+                        // Unpaid orders retain the existing cancellation restrictions.
+                        if (!List.of("PENDING_PAYMENT", "CONFIRMED").contains(order.getStatus())) {
+                                throw new ResponseStatusException(
+                                                HttpStatus.CONFLICT,
+                                                "This order can no longer be cancelled");
+                        }
                 }
 
                 if (requests.existsByOrderItemIdAndRequestTypeAndStatus(
@@ -183,10 +193,17 @@ public class OrderService {
                                 .map(sellerOrder -> {
                                         List<OrderDetailsResponse.Item> orderItems = sellerOrder.getItems().stream()
                                                         .map(item -> {
+                                                                boolean paid = "PAID".equals(order.getPaymentStatus());
+
                                                                 boolean cancellable = "ACTIVE".equals(item.getStatus())
-                                                                                && List.of("PENDING_PAYMENT",
-                                                                                                "CONFIRMED")
-                                                                                                .contains(order.getStatus());
+                                                                                && (paid
+                                                                                                ? !List.of("CANCELLED",
+                                                                                                                "REFUND_PENDING",
+                                                                                                                "REFUNDED")
+                                                                                                                .contains(order.getStatus())
+                                                                                                : List.of("PENDING_PAYMENT",
+                                                                                                                "CONFIRMED")
+                                                                                                                .contains(order.getStatus()));
                                                                 boolean returnable = "DELIVERED"
                                                                                 .equals(item.getStatus());
                                                                 boolean reviewable = "DELIVERED"

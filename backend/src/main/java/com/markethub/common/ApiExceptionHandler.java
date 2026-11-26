@@ -1,3 +1,4 @@
+
 package com.markethub.common;
 
 import java.util.LinkedHashMap;
@@ -13,39 +14,82 @@ import org.springframework.security.core.AuthenticationException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import org.springframework.web.server.ResponseStatusException;
 
 @RestControllerAdvice
 public class ApiExceptionHandler {
 
+    private static final Logger logger =
+            LoggerFactory.getLogger(ApiExceptionHandler.class);
+
     @ExceptionHandler(AuthenticationException.class)
-    ResponseEntity<ProblemDetail> authenticationFailure(AuthenticationException exception) {
+    ResponseEntity<ProblemDetail> authenticationFailure(
+            AuthenticationException exception) {
+
         ProblemDetail problem = ProblemDetail.forStatusAndDetail(
-                HttpStatus.UNAUTHORIZED, "Invalid email or password");
+                HttpStatus.UNAUTHORIZED,
+                "Invalid email or password");
+
         problem.setTitle("Authentication failed");
-        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(problem);
+
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                .body(problem);
+    }
+
+    @ExceptionHandler(ResponseStatusException.class)
+    ResponseEntity<ProblemDetail> handleResponseStatusException(
+            ResponseStatusException exception) {
+
+        logger.warn("API request failed: status={}, reason={}",
+                exception.getStatusCode(),
+                exception.getReason());
+
+        ProblemDetail problem = ProblemDetail.forStatusAndDetail(
+                exception.getStatusCode(),
+                exception.getReason() != null
+                        ? exception.getReason()
+                        : "Request could not be completed");
+
+        problem.setTitle("Request failed");
+
+        return ResponseEntity.status(exception.getStatusCode())
+                .body(problem);
     }
 
     @ExceptionHandler(DataIntegrityViolationException.class)
-    ResponseEntity<ProblemDetail> conflict(DataIntegrityViolationException exception) {
-        logger.error("Database integrity violation during registration", exception);
+    ResponseEntity<ProblemDetail> conflict(
+            DataIntegrityViolationException exception) {
+
+        logger.error("Database integrity violation", exception);
+
         ProblemDetail problem = ProblemDetail.forStatusAndDetail(
-                HttpStatus.CONFLICT, "A record with the supplied unique value already exists");
+                HttpStatus.CONFLICT,
+                "A record with the supplied unique value already exists");
+
         problem.setTitle("Conflicting record");
-        return ResponseEntity.status(HttpStatus.CONFLICT).body(problem);
+
+        return ResponseEntity.status(HttpStatus.CONFLICT)
+                .body(problem);
     }
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
-    ResponseEntity<ProblemDetail> invalidRequest(MethodArgumentNotValidException exception) {
+    ResponseEntity<ProblemDetail> invalidRequest(
+            MethodArgumentNotValidException exception) {
+
         Map<String, String> fieldErrors = new LinkedHashMap<>();
+
         exception.getBindingResult().getFieldErrors().forEach(error ->
-                fieldErrors.putIfAbsent(error.getField(), error.getDefaultMessage()));
+                fieldErrors.putIfAbsent(
+                        error.getField(),
+                        error.getDefaultMessage()));
+
         ProblemDetail problem = ProblemDetail.forStatusAndDetail(
-                HttpStatus.BAD_REQUEST, "One or more request fields are invalid");
+                HttpStatus.BAD_REQUEST,
+                "One or more request fields are invalid");
+
         problem.setTitle("Validation failed");
         problem.setProperty("fieldErrors", fieldErrors);
+
         return ResponseEntity.badRequest().body(problem);
     }
-
-    private static final Logger logger =
-    LoggerFactory.getLogger(ApiExceptionHandler.class);
 }

@@ -1,0 +1,477 @@
+/* Main authentication layout */
+
+.mh-auth-page {
+    min-height: 100vh;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    background: #f5f8ff;
+    color: #172b4d;
+    font-family: inherit;
+}
+
+/* Left introduction section */
+
+.mh-auth-intro {
+    position: relative;
+    min-height: 100vh;
+    padding: 42px 7%;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    background: linear-gradient(145deg, #eef4ff 0%, #e3edff 100%);
+}
+
+.mh-brand {
+    display: inline-flex;
+    align-items: center;
+    gap: 12px;
+    width: fit-content;
+    color: #172b4d;
+    font-size: 30px;
+    font-weight: 750;
+    text-decoration: none;
+    letter-spacing: -1px;
+}
+
+.mh-brand:hover {
+    color: #172b4d;
+}
+
+.mh-brand > span:last-child > span {
+    color: #1764d8;
+}
+
+.mh-brand-icon {
+    width: 43px;
+    height: 43px;
+    display: grid;
+    place-items: center;
+    border-radius: 10px;
+    background: #1764d8;
+    color: white;
+}
+
+.mh-brand-icon svg {
+    width: 27px;
+    height: 27px;
+}
+
+.mh-intro-content {
+    position: relative;
+    z-index: 2;
+    max-width: 540px;
+    margin-top: 35px;
+}
+
+.mh-eyebrow {
+    color: #1764d8;
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 1.5px;
+    margin-bottom: 18px;
+}
+
+.mh-intro-content h1 {
+    color: #172b4d;
+    font-size: clamp(42px, 5vw, 65px);
+    line-height: 1.12;
+    font-weight: 750;
+    letter-spacing: -2px;
+    margin-bottom: 20px;
+}
+
+.mh-intro-content h1 span {
+    color: #1764d8;
+}
+
+.mh-intro-description {
+    max-width: 430px;
+    color: #536681;
+    font-size: 18px;
+    line-height: 1.7;
+}
+
+.mh-benefits {
+    display: flex;
+    flex-direction: column;
+    gap: 22px;
+    margin-top: 38px;
+}
+
+.mh-benefit {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+}
+
+.mh-benefit-icon {
+    width: 43px;
+    height: 43px;
+    flex-shrink: 0;
+    display: grid;
+    place-items: center;
+    border-radius: 50%;
+    background: #d8e7ff;
+    color: #1764d8;
+    font-size: 22px;
+    font-weight: 700;
+}
+
+.mh-benefit h3 {
+    font-size: 15px;
+    font-weight: 700;
+    margin: 0 0 4px;
+    color: #172b4d;
+}
+
+.mh-benefit p {
+    font-size: 13px;
+    color: #61728b;
+    margin: 0;
+}
+
+/* Shopping illustration */
+
+.mh-shopping-illustration {
+    position: absolute;
+    width: 330px;
+    height: 240px;
+    right: 3%;
+    bottom: 10%;
+    z-index: 1;
+}
+
+.mh-illustration-circle {
+    position: absolute;
+    width: 220px;
+    height: 220px;
+    border-radius: 50%;
+    background: #d5e5ff;
+    right: 25px;
+    bottom: 0;
+}
+
+.mh-shopping-bag {
+    position: absolute;
+    width: 75px;
+    height: 90px;
+    bottom: 55px;
+    border-radius: 7px 7px 12px 12px;
+    z-index: 2;
+}
+
+.mh-shopping-bag::before {
+    content: "";
+    position: absolute;
+    width: 30px;
+    height: 22px;
+    border: 5px solid currentColor;
+    border-bottom: 0;
+    border-radius: 18px 18px 0 0;
+    left: 17px;
+    top: -19px;
+}
+
+.mh-bag-one {
+    background: #1764d8;
+    color: #1764d8;
+    right: 115px;
+    transform: rotate(-7deg);
+}
+
+.mh-bag-one span {
+    color: white;
+    font-size: 32px;
+    font-weight: 700;
+    display: grid;
+    place-items: center;
+    height: 100%;
+}
+
+.mh-bag-two {
+    background: #f2b75b;
+    color: #f2b75b;
+    right: 35px;
+    transform: rotate(8deg);
+}
+
+.mh-cart {
+    position: absolute;
+    z-index: 3;
+    width: 190px;
+    right: 40px;
+    bottom: 0;
+    color: #637b9e;
+}
+
+.mh-cart svg {
+    width: 100%;
+}
+
+.mh-intro-footer {
+    position: relative;
+    z-index: 2;
+    color: #71829b;
+    font-size: 12px;
+    margin: 0;
+}
+
+/* Right login section */
+
+.mh-auth-form-section {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 45px 7%;
+    background: #f8faff;
+}
+
+.mh-login-card {
+    width: 100%;
+    max-width: 480px;
+    padding: 45px 42px;
+    background: #ffffff;
+    border: 1px solid #e7edf6;
+    border-radius: 14px;
+    box-shadow: 0 12px 40px rgba(29, 58, 101, 0.07);
+}
+
+.mh-login-heading {
+    margin-bottom: 32px;
+}
+
+.mh-login-heading h2 {
+    color: #172b4d;
+    font-size: 30px;
+    font-weight: 750;
+    letter-spacing: -0.7px;
+    margin-bottom: 9px;
+}
+
+.mh-login-heading p {
+    color: #74839a;
+    font-size: 14px;
+    line-height: 1.6;
+    margin: 0;
+}
+
+/* Form fields */
+
+.mh-form-group {
+    margin-bottom: 23px;
+}
+
+.mh-form-group label {
+    display: block;
+    color: #263a57;
+    font-size: 14px;
+    font-weight: 650;
+    margin-bottom: 9px;
+}
+
+.mh-input-wrapper {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    height: 53px;
+    padding: 0 15px;
+    border: 1px solid #dce4ef;
+    border-radius: 8px;
+    background: #ffffff;
+    transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.mh-input-wrapper:focus-within {
+    border-color: #1764d8;
+    box-shadow: 0 0 0 3px rgba(23, 100, 216, 0.10);
+}
+
+.mh-input-wrapper > svg {
+    width: 20px;
+    height: 20px;
+    flex-shrink: 0;
+    color: #8493a8;
+}
+
+.mh-input-wrapper input {
+    width: 100%;
+    min-width: 0;
+    height: 100%;
+    border: 0;
+    outline: none;
+    background: transparent;
+    color: #263a57;
+    font-size: 14px;
+}
+
+.mh-input-wrapper input::placeholder {
+    color: #a0adbd;
+}
+
+.mh-password-toggle {
+    flex-shrink: 0;
+    padding: 5px;
+    border: 0;
+    background: transparent;
+    color: #1764d8;
+    font-size: 12px;
+    font-weight: 650;
+    cursor: pointer;
+}
+
+/* Forgot password */
+
+.mh-login-options {
+    display: flex;
+    justify-content: flex-end;
+    margin: -4px 0 25px;
+}
+
+.mh-login-options a {
+    color: #1764d8;
+    font-size: 13px;
+    font-weight: 600;
+    text-decoration: none;
+}
+
+.mh-login-options a:hover,
+.mh-register-prompt a:hover {
+    text-decoration: underline;
+}
+
+/* Login button */
+
+.mh-login-button {
+    width: 100%;
+    height: 51px;
+    border: 0;
+    border-radius: 8px;
+    background: #1764d8;
+    color: white;
+    font-size: 15px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: background 0.2s, transform 0.2s;
+}
+
+.mh-login-button:hover:not(:disabled) {
+    background: #1054bb;
+    transform: translateY(-1px);
+}
+
+.mh-login-button:disabled {
+    opacity: 0.7;
+    cursor: not-allowed;
+}
+
+/* Registration link */
+
+.mh-register-prompt {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 5px;
+    margin-top: 29px;
+    color: #74839a;
+    font-size: 13px;
+}
+
+.mh-register-prompt a {
+    color: #1764d8;
+    font-weight: 650;
+    text-decoration: none;
+}
+
+.mh-form-footer {
+    margin-top: 25px;
+    color: #94a0b2;
+    font-size: 12px;
+    text-align: center;
+}
+
+/* Responsive layout */
+
+@media (max-width: 900px) {
+    .mh-auth-page {
+        grid-template-columns: 0.85fr 1.15fr;
+    }
+
+    .mh-auth-intro {
+        padding: 35px 6%;
+    }
+
+    .mh-login-card {
+        padding: 35px 28px;
+    }
+
+    .mh-shopping-illustration {
+        transform: scale(0.8);
+        transform-origin: bottom right;
+        right: 0;
+    }
+}
+
+@media (max-width: 700px) {
+    .mh-auth-page {
+        grid-template-columns: 1fr;
+    }
+
+    .mh-auth-intro {
+        min-height: auto;
+        padding: 25px 7%;
+    }
+
+    .mh-brand {
+        font-size: 25px;
+    }
+
+    .mh-intro-content {
+        margin-top: 35px;
+    }
+
+    .mh-intro-content h1 {
+        font-size: 42px;
+    }
+
+    .mh-intro-description {
+        font-size: 15px;
+    }
+
+    .mh-benefits {
+        gap: 15px;
+        margin-top: 25px;
+    }
+
+    .mh-shopping-illustration {
+        display: none;
+    }
+
+    .mh-intro-footer {
+        margin-top: 30px;
+    }
+
+    .mh-auth-form-section {
+        padding: 35px 6%;
+    }
+
+    .mh-login-card {
+        max-width: 500px;
+        padding: 32px 25px;
+    }
+
+    .mh-login-heading h2 {
+        font-size: 26px;
+    }
+}
+
+@media (max-width: 380px) {
+    .mh-login-card {
+        padding: 27px 19px;
+    }
+
+    .mh-intro-content h1 {
+        font-size: 36px;
+    }
+}

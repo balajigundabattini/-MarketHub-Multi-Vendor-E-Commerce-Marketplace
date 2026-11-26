@@ -6,7 +6,6 @@ import com.markethub.catalog.api.InventoryResponse;
 import com.markethub.catalog.api.InventoryUpdateRequest;
 import com.markethub.catalog.api.ProductRequest;
 import com.markethub.catalog.api.ProductResponse;
-import com.markethub.catalog.domain.ProductStatus;
 import com.markethub.catalog.infrastructure.jpa.CategoryEntity;
 import com.markethub.catalog.infrastructure.jpa.CategoryRepository;
 import com.markethub.catalog.infrastructure.jpa.InventoryEntity;

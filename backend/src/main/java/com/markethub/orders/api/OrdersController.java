@@ -3,7 +3,6 @@ package com.markethub.orders.api;
 import jakarta.validation.Valid;
 import com.markethub.orders.application.OrderService;
 import org.springframework.data.domain.Page;
-import org.springframework.http.HttpStatus;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.web.bind.annotation.*;

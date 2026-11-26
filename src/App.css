@@ -49,15 +49,17 @@ a {
   justify-content: space-between;
   gap: 12px;
   margin: 0 auto;
+  
 }
 
 .brand {
   display: inline-flex;
   align-items: center;
   gap: 10px;
-  font-size: 1.2rem;
+  font-size: 1.5rem;
   font-weight: 800;
   letter-spacing: -0.04em;
+  text-decoration: none;
 }
 
 .brand-mark {
@@ -68,7 +70,7 @@ a {
   border-radius: 10px;
   background: #c5f36b;
   color: #102a2a;
-  font-size: 1rem;
+  font-size: 1.4rem;
 }
 
 .header-actions,
@@ -87,6 +89,7 @@ a {
   padding: 10px 13px;
   font-size: 0.94rem;
   font-weight: 650;
+  text-decoration: none;
 }
 
 .header-register {

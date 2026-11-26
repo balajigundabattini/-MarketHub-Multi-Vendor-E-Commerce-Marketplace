@@ -51,8 +51,18 @@ public class InventoryReservationEntity {
         this.expiresAt = newExpiresAt;
     }
 
+
     public void commit() {
         status = "COMMITTED";
+    }
+
+    public void cancelCommitted() {
+        if (!"COMMITTED".equals(status)) {
+            throw new IllegalStateException(
+                    "Only committed reservations can be cancelled");
+        }
+
+        status = "RELEASED";
     }
 
     @PrePersist

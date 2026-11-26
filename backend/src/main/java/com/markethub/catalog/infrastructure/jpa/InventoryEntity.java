@@ -57,6 +57,15 @@ public class InventoryEntity {
         onHand -= quantity;
     }
 
+    public void restoreCommittedStock(int quantity) {
+        if (quantity < 1) {
+            throw new IllegalArgumentException(
+                    "Restored quantity must be positive");
+        }
+
+        onHand += quantity;
+    }
+
     public Long getProductId() {
         return productId;
     }

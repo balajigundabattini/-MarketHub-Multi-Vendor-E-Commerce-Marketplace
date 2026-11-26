@@ -21,3 +21,11 @@ export const markAdminSettlementPaid = async (id, payoutReference) => (await api
 export const fetchAdminReviews = async (params) => (await apiClient.get('/admin/reviews', { params })).data
 export const moderateAdminReview = async (id, status) => (await apiClient.patch(`/admin/reviews/${encodeURIComponent(id)}`, { status })).data
 export const fetchAdminSettlementSellers = async () => (await apiClient.get('/admin/seller-applications', { params: { page: 0, size: 100, status: 'APPROVED' } })).data
+export const fetchAdminCancellationRequests = async () =>
+  (await apiClient.get('/admin/orders/cancellation-requests')).data
+
+export const reviewAdminCancellationRequest = async (id, request) =>
+  (await apiClient.patch(
+    `/admin/orders/cancellation-requests/${encodeURIComponent(id)}`,
+    request
+  )).data
