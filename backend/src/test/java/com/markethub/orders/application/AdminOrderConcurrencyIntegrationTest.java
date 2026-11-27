@@ -23,6 +23,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.mail.javamail.JavaMailSender;
+import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.support.TransactionTemplate;
@@ -33,6 +34,8 @@ import com.markethub.orders.infrastructure.jpa.OrderEntity;
 import com.markethub.payments.infrastructure.jpa.PaymentEntity;
 import com.markethub.payments.infrastructure.jpa.RefundEntity;
 
+
+@ActiveProfiles("test")
 @SpringBootTest(properties = {
         "spring.datasource.url=jdbc:mysql://localhost:3306/markethub_test",
         "spring.jpa.hibernate.ddl-auto=validate",

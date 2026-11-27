@@ -31,15 +31,19 @@ public class AuthController {
     private final AuthService authService;
     private final SignedCsrfTokenService csrfTokenService;
     private final boolean secureCookies;
+    private final String cookieSameSite;
 
     public AuthController(
-            AuthService authService,
-            SignedCsrfTokenService csrfTokenService,
-            @Value("${markethub.security.refresh-cookie-secure}") boolean secureCookies) {
-        this.authService = authService;
-        this.csrfTokenService = csrfTokenService;
-        this.secureCookies = secureCookies;
-    }
+        AuthService authService,
+        SignedCsrfTokenService csrfTokenService,
+        @Value("${markethub.security.refresh-cookie-secure}") boolean secureCookies,
+        @Value("${markethub.security.cookie-same-site:Strict}") String cookieSameSite) {
+
+    this.authService = authService;
+    this.csrfTokenService = csrfTokenService;
+    this.secureCookies = secureCookies;
+    this.cookieSameSite = cookieSameSite;
+}
 
     @PostMapping("/register")
     public ResponseEntity<Void> register(@Valid @RequestBody RegisterRequest request) {
@@ -120,7 +124,7 @@ public class AuthController {
                 .httpOnly(httpOnly)
                 .secure(secureCookies)
                 .path(name.equals(CSRF_COOKIE) ? "/" : AUTH_COOKIE_PATH)
-                .sameSite("Strict")
+                .sameSite(cookieSameSite)
                 .maxAge(lifetime)
                 .build();
     }
@@ -130,7 +134,7 @@ public class AuthController {
                 .httpOnly(httpOnly)
                 .secure(secureCookies)
                 .path(name.equals(CSRF_COOKIE) ? "/" : AUTH_COOKIE_PATH)
-                .sameSite("Strict")
+                .sameSite(cookieSameSite)
                 .maxAge(java.time.Duration.ZERO)
                 .build();
     }
